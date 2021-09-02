@@ -40,7 +40,7 @@ export default {
   'Clear all': 'Clear all',
   'Empty': 'Looks like you haven’t added any items to the bag yet. Start shopping to fill it in.',
   'Help & FAQs': 'Help & FAQs',
-  'Download': 'Download our application.',
+  'Download our application.': 'Download our application.',
   'Find out more': 'Find out more',
   'Login': 'Login',
   'Forgotten password?': 'Forgotten password?',
@@ -118,7 +118,7 @@ export default {
   'Let’s start now – we’ll help you': 'Let’s start now – we’ll help you.',
   'Search results': 'Search results',
   'Product suggestions': 'Product suggestions',
-  'Search for items': 'Search for items',
+  'Start typing to search': 'Start typing to search',
   'Enter promo code': 'Enter promo code',
   'Shipping method': 'Shipping method',
   'Continue to billing': 'Continue to billing',
@@ -142,5 +142,6 @@ export default {
   'Password': 'Password',
   'Repeat Password': 'Repeat Password',
   'Forgot Password Modal Email': 'Email you are using to sign in:',
+  'FAQ': 'Frequently Asked Questions',
   forgotPasswordConfirmation: 'Thanks! If there is an account registered with the {0} email, you will find message with a password reset link in your inbox.'
 };

@@ -1,266 +1,216 @@
 <template>
   <div id="service_list">
-    <LazyHydrate when-idle>
-      <SfHero class="hero">
-        <SfHeroItem
-          v-for="(hero, i) in heroes"
-          :key="i"
-          :title="hero.title"
-          :subtitle="hero.subtitle"
-          :background="hero.background"
-          :image="hero.image"
-          :class="hero.className"
-        />
-      </SfHero>
-    </LazyHydrate>
-aaaaaaaaaaaaaaaaaa222222222222222222
+	  <ServiceNavigation />
     <LazyHydrate when-visible>
-      <SfBannerGrid :banner-grid="1" class="banner-grid">
-        <template v-for="item in banners" v-slot:[item.slot]>
-          <SfBanner
-            :key="item.slot"
-            :title="item.title"
-            :subtitle="item.subtitle"
-            :description="item.description"
-            :button-text="item.buttonText"
-            :link="localePath(item.link)"
-            :image="item.image"
-            :class="item.class"
+      <ServiceBannerGrid :banner-grid="1" class="banner-grid">
+        <template v-for="service in filtered_services">
+          <ServiceBanner
+            :key="service._id"
+            :banner="service"
+            :class="'sf-banner--slim banner__tshirt pointer'"
+            @click="setServiceModal(service)"
           />
         </template>
-      </SfBannerGrid>
-    </LazyHydrate>
-
-    <LazyHydrate when-visible>
-      <div class="similar-products">
-        <SfHeading title="Match with it" :level="3"/>
-        <nuxt-link :to="localePath('/c/women')" class="smartphone-only">See all</nuxt-link>
-      </div>
-    </LazyHydrate>
-
-    <LazyHydrate when-visible>
-        <SfCarousel class="carousel" :settings="{ peek: 16, breakpoints: { 1023: { peek: 0, perView: 2 } } }">
-          <template #prev="{go}">
-            <SfArrow
-              aria-label="prev"
-              class="sf-arrow--left sf-arrow--long"
-              @click="go('prev')"
-            />
-          </template>
-          <template #next="{go}">
-            <SfArrow
-              aria-label="next"
-              class="sf-arrow--right sf-arrow--long"
-              @click="go('next')"
-            />
-          </template>
-          <SfCarouselItem class="carousel__item" v-for="(product, i) in products" :key="i">
-            <SfProductCard
-              :title="product.title"
-              :image="product.image"
-              :regular-price="product.price.regular"
-              :max-rating="product.rating.max"
-              :score-rating="product.rating.score"
-              :show-add-to-cart-button="true"
-              :is-on-wishlist="product.isInWishlist"
-              :link="localePath({ name: 'home' })"
-              class="carousel__item__product"
-              @click:wishlist="toggleWishlist(i)"
-            />
-          </SfCarouselItem>
-        </SfCarousel>
-    </LazyHydrate>
-
-    <LazyHydrate when-visible>
-      <SfCallToAction
-        title="Subscribe to Newsletters"
-        button-text="Subscribe"
-        description="Be aware of upcoming sales and events. Receive gifts and special offers!"
-        image="/homepage/newsletter.webp"
-        class="call-to-action"
-      />
-    </LazyHydrate>
-
-    <LazyHydrate when-visible>
-      <InstagramFeed />
+      </ServiceBannerGrid>
     </LazyHydrate>
 
   </div>
 </template>
 <script>
-import {
-  SfHero,
-  // SfBanner,
-  SfCallToAction,
-  SfSection,
-  SfCarousel,
-  SfProductCard,
-  SfImage,
-  // SfBannerGrid,
-  SfHeading,
-  SfArrow,
-  SfButton
-} from '@storefront-ui/vue';
-import InstagramFeed from '~/components/InstagramFeed.vue';
-import SfBanner from '~/components/izperime/SfBanner.vue';
-import SfBannerGrid from '~/components/izperime/SfBannerGrid.vue';
+import ServiceBanner from '~/components/izperime/ServiceBanner.vue';
+import ServiceBannerGrid from '~/components/izperime/ServiceBannerGrid.vue';
+import ServiceNavigation from '~/components/izperime/ServiceNavigation.vue';
 import LazyHydrate from 'vue-lazy-hydration';
 import cacheControl from './../helpers/cacheControl';
+import { useUiState } from '~/composables';
 
 export default {
-  name: 'Home',
+  name: 'ServiceList',
+	layout: 'app',
   middleware: cacheControl({
     'max-age': 60,
     'stale-when-revalidate': 5
   }),
+	setup(props, { root }) {
+		const { activeServiceCategory, setServiceModal } = useUiState();
+		return {
+			activeServiceCategory,
+			setServiceModal,
+		};
+	},
   components: {
-    InstagramFeed,
-    SfHero,
-    SfBanner,
-    SfCallToAction,
-    SfSection,
-    SfCarousel,
-    SfProductCard,
-    SfImage,
-    SfBannerGrid,
-    SfHeading,
-    SfArrow,
-    SfButton,
+	  ServiceBannerGrid,
+	  ServiceBanner,
+	  ServiceNavigation,
     LazyHydrate
   },
   data() {
     return {
-
-      heroes: [
+      services: [
         {
-          title: 'Colorful summer dresses are already in store',
-          subtitle: 'SUMMER COLLECTION 2019',
-          background: '#eceff1',
-          image: '/homepage/bannerH.webp'
-        },
-        {
-          title: 'Colorful summer dresses are already in store',
-          subtitle: 'SUMMER COLLECTION 2019',
-          background: '#efebe9',
-          image: '/homepage/bannerA.webp',
-          className:
-            'sf-hero-item--position-bg-top-left sf-hero-item--align-right'
-        },
-        {
-          title: 'Colorful summer dresses are already in store',
-          subtitle: 'SUMMER COLLECTION 2019',
-          background: '#fce4ec',
-          image: '/homepage/bannerB.webp'
-        }
-      ],
-      banners: [
-        {
-          slot: 'banner-A',
-          subtitle: 'Dresses',
-          title: 'Cocktail & Party',
-          description:
-            'Find stunning women\'s cocktail dresses and party dresses. Stand out in lace and metallic cocktail dresses from all your favorite brands.',
-          buttonText: 'Shop now',
+        	_id: '1',
+	        category: 'tops',
+	        category_index: 0,
+          title: 'Five Shirts',
+	        description: "Whether it's an old pair of jeans or your best suit trousers, we'll make sure they look great for every possible occasion",
+	        offer_text: 'Five Shirts',
           image: {
-            mobile: this.$config.theme.home.bannerA.image.mobile,
-            desktop: this.$config.theme.home.bannerA.image.desktop
+        		mobile: '/homepage/productA.webp',
+        		desktop: '/homepage/productA.webp'
           },
-          class: 'sf-banner--slim desktop-only',
-          link: this.$config.theme.home.bannerA.link
+          price: 15,
+          currency: 'EUR',
+	        sub_products: [
+	        	{
+	        		_id: 11,
+        		  title: 'High Five',
+        		  description: '2x shirts washed, ironed & hung',
+			        price: 14,
+			        currency: 'EUR',
+		        },
+	        ],
+	        faqs: [
+		        {
+		        	question: 'Will my items be dry cleaned or laundered?',
+			        answer: "We'll always follow the instructions on the care label to ensure the best possible cleaning. If you'd like to give us specific instructions, just let us know in the Cleaning Instructions of your order."
+		        }
+	        ]
         },
         {
-          slot: 'banner-B',
-          subtitle: 'Dresses',
-          title: 'Linen Dresses',
-          description:
-            'Find stunning women\'s cocktail dresses and party dresses. Stand out in lace and metallic cocktail dresses from all your favorite brands.',
-          buttonText: 'Shop now',
-          image: this.$config.theme.home.bannerB.image,
-          class: 'sf-banner--slim banner-central desktop-only',
-          link: this.$config.theme.home.bannerB.link
+	        _id: '2',
+	        category: 'tops',
+	        category_index: 0,
+          title: 'Blouses',
+	        image: {
+		        mobile: '/homepage/productB.webp',
+		        desktop: '/homepage/productB.webp'
+	        },
+          price: 7,
+          currency: 'EUR',
         },
         {
-          slot: 'banner-C',
-          subtitle: 'T-Shirts',
-          title: 'The Office Life',
-          image: this.$config.theme.home.bannerC.image,
-          class: 'sf-banner--slim banner__tshirt',
-          link: this.$config.theme.home.bannerC.link
+	        _id: '3',
+	        category: 'tops',
+	        category_index: 0,
+          title: 'T-shirts',
+	        image: {
+		        mobile: '/homepage/productC.webp',
+		        desktop: '/homepage/productC.webp'
+	        },
+          price: 10,
+          currency: 'EUR',
         },
         {
-          slot: 'banner-D',
-          subtitle: 'Summer Sandals',
-          title: 'Eco Sandals',
-          image: this.$config.theme.home.bannerD.image,
-          class: 'sf-banner--slim',
-          link: this.$config.theme.home.bannerD.link
-        }
-      ],
-      products: [
-        {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productA.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: true
+	        _id: '4',
+	        category: 'tops',
+	        category_index: 0,
+          title: 'Knitwear',
+	        image: {
+		        mobile: '/homepage/productA.webp',
+		        desktop: '/homepage/productA.webp'
+	        },
+          price: 5,
+          currency: 'EUR',
         },
         {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productB.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
+	        _id: '5',
+	        category: 'laundry',
+	        category_index: 1,
+          title: 'Baby Bundle',
+	        image: {
+		        mobile: '/homepage/productB.webp',
+		        desktop: '/homepage/productB.webp'
+	        },
+          price: 10,
+          currency: 'EUR',
         },
         {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productC.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
+	        _id: '6',
+	        category: 'laundry',
+	        category_index: 1,
+          title: 'Wash, Dry, Fold',
+	        image: {
+		        mobile: '/homepage/productC.webp',
+		        desktop: '/homepage/productC.webp'
+	        },
+          price: 15,
+          currency: 'EUR',
         },
         {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productA.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
+	        _id: '7',
+	        category: 'bedding',
+	        category_index: 2,
+          title: 'Wash, Dry, Fold',
+	        image: {
+		        mobile: '/homepage/productC.webp',
+		        desktop: '/homepage/productC.webp'
+	        },
+          price: 15,
+          currency: 'EUR',
         },
-        {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productB.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
-        },
-        {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productC.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
-        },
-        {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productA.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
-        },
-        {
-          title: 'Cream Beach Bag',
-          image: '/homepage/productB.webp',
-          price: { regular: '50.00 $' },
-          rating: { max: 5, score: 4 },
-          isInWishlist: false
-        }
+	      {
+		      _id: '7',
+		      category: 'trousers',
+		      category_index: 4,
+		      title: 'Trousers',
+		      description: "Whether it's an old pair of jeans or your best suit trousers, we'll make sure they look great for every possible occasion",
+		      offer_text: 'Five Shirts',
+		      image: {
+			      mobile: '/homepage/productA.webp',
+			      desktop: '/homepage/productA.webp'
+		      },
+		      price: 15,
+		      currency: 'EUR',
+		      sub_products: [
+			      {
+				      _id: 11,
+				      title: 'Trousers',
+				      description: 'Cleaned & ironed',
+				      price: 9,
+				      currency: 'EUR',
+			      },
+			      {
+				      _id: 12,
+				      title: 'Silk Trousers',
+				      description: 'Includes beaded or sequined trim',
+				      price: 9,
+				      currency: 'EUR',
+			      },
+			      {
+				      _id: 13,
+				      title: '10x Trousers - Pre-paid',
+				      bullets: [
+					      'Excludes silk & leather',
+					      'Valid for 12 months',
+				      ],
+				      price: 59,
+				      currency: 'EUR',
+			      },
+			      {
+				      _id: 14,
+				      title: '25x Trousers - Pre-paid',
+				      bullets: [
+					      'Excludes silk & leather',
+					      'Valid for 12 months',
+				      ],
+				      price: 139,
+				      currency: 'EUR',
+			      },
+		      ]
+	      },
       ]
     };
   },
   methods: {
-    toggleWishlist(index) {
-      this.products[index].isInWishlist = !this.products[index].isInWishlist;
-    }
-  }
+  },
+	computed: {
+  	filtered_services() {
+  		let services = [...this.services]
+		  let current_category = this.activeServiceCategory
+		  services = services.filter(service=>service.category_index === current_category)
+  		return services
+	  }
+	}
 };
 </script>
 
@@ -370,5 +320,11 @@ export default {
      transform-origin: center;
   }
 }
+	.banner-grid {
+		margin-top: 0;
+	}
 
+	.pointer {
+		cursor: pointer;
+	}
 </style>

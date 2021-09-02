@@ -3,6 +3,8 @@
     v-e2e="'login-modal'"
     :visible="isLoginModalOpen"
     class="modal"
+    transitionOverlay="sf-fade"
+    transitionModal="our-collapse-bottom"
     @close="closeModal"
   >
     <template #modal-bar>

@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <SfMegaMenu
+  <SfModal
+		  v-e2e="'search-modal'"
       :visible="isSearchOpen"
-      :title="$t('Search results')"
-      class="search"
+      :overlay="false"
+      transitionModal="sf-collapse-top"
+      class="modal"
     >
-      <transition name="sf-fade" mode="out-in">
+      <transition class="sf-collapse-top2" name="sf-collapse-top" mode="out-in" >
         <div v-if="products && products.length > 0" class="search__wrapper-results" key="results">
           <SfMegaMenuColumn :title="$t('Categories')" class="sf-mega-menu-column--pined-content-on-mobile search__categories">
             <template #title="{title}">
@@ -75,12 +76,11 @@
           <SfButton class="before-results__button color-secondary smartphone-only" @click="$emit('close')">{{ $t('Go back') }}</SfButton>
         </div>
       </transition>
-    </SfMegaMenu>
-  </div>
+</SfModal>
 </template>
 <script>
 import {
-  SfMegaMenu,
+	SfModal,
   SfList,
   SfBanner,
   SfProductCard,
@@ -95,7 +95,7 @@ import { productGetters } from '@vue-storefront/commercetools';
 export default {
   name: 'SearchResults',
   components: {
-    SfMegaMenu,
+	  SfModal,
     SfList,
     SfBanner,
     SfProductCard,
@@ -119,8 +119,7 @@ export default {
     const categories = computed(() => props.result?.categories);
 
     watch(() => props.visible, (newVal) => {
-      isSearchOpen.value = newVal;
-      if (isSearchOpen.value) {
+      if (isSearchOpen) {
         document.body.classList.add('no-scroll');
       } else {
         document.body.classList.remove('no-scroll');
@@ -139,6 +138,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .search {
+	height: calc(100vh - 107px);
   position: absolute;
   right: 0;
   left: 0;
@@ -149,6 +149,15 @@ export default {
   @include for-desktop {
     --mega-menu-content-padding: var(--spacer-xl) 0;
   }
+	& > .sf-mega-menu__content {
+		height: 100%;
+		& > .sf-mega-menu__menu {
+			height: 100%;
+			& > .before-results {
+				height: 100%;
+			}
+		}
+	}
   &__wrapper-results {
     display: flex;
     flex-direction: column;
@@ -245,5 +254,15 @@ export default {
     margin: var(--spacer-xl) auto;
     width: 100%;
   }
+}
+
+::v-deep .search__wrapper-results {
+	transition-duration: 400ms
+}
+::v-deep .before-results {
+	transition-duration: 400ms
+}
+::v-deep .sf-collapse-top2 {
+	transition-duration: 400ms
 }
 </style>

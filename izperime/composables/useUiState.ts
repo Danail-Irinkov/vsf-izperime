@@ -5,6 +5,13 @@ import VueCompositionAPI, { reactive, computed } from '@vue/composition-api';
 Vue.use(VueCompositionAPI);
 
 const state = reactive({
+	isAccountMenuOpen: true,
+	activeServiceCategory: 0,
+	hoverServiceCategory: 0,
+	is_new_hover_set: false,
+	currentServiceModal: null,
+	isAccountModalOpen: false,
+	// Original States
   isCartSidebarOpen: false,
   isWishlistSidebarOpen: false,
   isLoginModalOpen: false,
@@ -14,10 +21,45 @@ const state = reactive({
 });
 
 const useUiState = () => {
-  const isMobileMenuOpen = computed(() => state.isMobileMenuOpen);
-  const toggleMobileMenu = () => {
-    state.isMobileMenuOpen = !state.isMobileMenuOpen;
-  };
+	const isAccountMenuOpen = computed(() => state.isAccountMenuOpen);
+	const toggleAccountMenu = () => {
+		if (state.isMobileMenuOpen) toggleMobileMenu();
+		state.isAccountMenuOpen = !state.isAccountMenuOpen;
+	};
+
+	const activeServiceCategory = computed(() => state.activeServiceCategory);
+	const setActiveCategory = (index) => {
+		state.activeServiceCategory = index
+	};
+
+	const hoverServiceCategory = computed(() => state.hoverServiceCategory);
+	const setHoverCategory = (index) => {
+		state.hoverServiceCategory = index
+	};
+	const unsetHoverCategory = (index) => {
+		state.hoverServiceCategory = state.activeServiceCategory
+		console.log('unsetHoverCategory', state.hoverServiceCategory)
+	};
+	const setNewHoverSet = (bool) => {
+		state.is_new_hover_set = bool
+	};
+	const is_new_hover_set = computed(() => state.is_new_hover_set);
+
+	const setServiceModal = (service) => {
+		state.currentServiceModal = service
+	};
+	const currentServiceModal = computed(() => state.currentServiceModal);
+
+	const isAccountModalOpen = computed(() => state.isAccountModalOpen);
+	const toggleAccountModal = () => {
+		state.isAccountModalOpen = !state.isAccountModalOpen;
+	};
+
+	// ORIGINAL VSF STATES
+	const isMobileMenuOpen = computed(() => state.isMobileMenuOpen);
+	const toggleMobileMenu = () => {
+		state.isMobileMenuOpen = !state.isMobileMenuOpen;
+	};
 
   const isCartSidebarOpen = computed(() => state.isCartSidebarOpen);
   const toggleCartSidebar = () => {
@@ -51,6 +93,20 @@ const useUiState = () => {
   };
 
   return {
+	  isAccountMenuOpen,
+	  toggleAccountMenu,
+	  activeServiceCategory,
+	  setActiveCategory,
+	  hoverServiceCategory,
+	  setHoverCategory,
+	  unsetHoverCategory,
+	  setNewHoverSet,
+	  is_new_hover_set,
+	  setServiceModal,
+	  currentServiceModal,
+	  isAccountModalOpen,
+	  toggleAccountModal,
+	  // Original VSF states
     isCartSidebarOpen,
     isWishlistSidebarOpen,
     isLoginModalOpen,

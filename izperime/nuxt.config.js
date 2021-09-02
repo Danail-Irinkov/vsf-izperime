@@ -124,6 +124,9 @@ export default {
   styleResources: {
     scss: [require.resolve('@storefront-ui/shared/styles/_helpers.scss', { paths: [process.cwd()] })]
   },
+	plugins: [
+		{ src: './plugins/globalFunctions.js', ssr: false },
+	],
   publicRuntimeConfig: {
     theme
   },

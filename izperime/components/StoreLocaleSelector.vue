@@ -8,27 +8,27 @@
     </SfButton>
     <SfBottomModal
       :is-open="isLangModalOpen"
-      :title="availableStores.length > 0 ? 'Choose store': ''"
+      :title="availableStores.length < 0 ? 'Choose store': ''"
       @click:close="isLangModalOpen = !isLangModalOpen">
-      <SfList>
-        <SfListItem v-for="store in availableStores" :key="store.id">
-          <a
-            href="javascript:void(0)"
-            class="container__store--link"
-            :class="isStoreSelected(store) ? 'container__store--selected' : ''"
-            @click="changeStore(store)"
-          >
-            <SfCharacteristic class="language">
-              <template #title>
-                <span>{{ store.name }}</span>
-              </template>
-              <template #icon>
-                <SfImage :src="`/icons/langs/${getStoreLocale(store)}.webp`" width="20" alt="Flag" class="language__flag" />
-              </template>
-            </SfCharacteristic>
-          </a>
-        </SfListItem>
-      </SfList>
+<!--      <SfList>-->
+<!--        <SfListItem v-for="store in availableStores" :key="store.id">-->
+<!--          <a-->
+<!--            href="javascript:void(0)"-->
+<!--            class="container__store&#45;&#45;link"-->
+<!--            :class="isStoreSelected(store) ? 'container__store&#45;&#45;selected' : ''"-->
+<!--            @click="changeStore(store)"-->
+<!--          >-->
+<!--            <SfCharacteristic class="language">-->
+<!--              <template #title>-->
+<!--                <span>{{ store.name }}</span>-->
+<!--              </template>-->
+<!--              <template #icon>-->
+<!--                <SfImage :src="`/icons/langs/${getStoreLocale(store)}.webp`" width="20" alt="Flag" class="language__flag" />-->
+<!--              </template>-->
+<!--            </SfCharacteristic>-->
+<!--          </a>-->
+<!--        </SfListItem>-->
+<!--      </SfList>-->
 
       <SfHeading
         :level="3"

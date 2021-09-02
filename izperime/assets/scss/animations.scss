@@ -1,0 +1,16 @@
+
+//.sf-collapse-bottom {
+
+.our-collapse-bottom {
+	&-enter-active,
+	&-leave-active {
+		transition: transform 0.25s ease-in-out;
+		@include for-desktop {
+			transition: transform 0.35s ease-in-out;
+		}
+	}
+	&-enter,
+	&-leave-to {
+		transform: translate3d(-100px, 150%, 0);
+	}
+}

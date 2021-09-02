@@ -1,33 +1,37 @@
 <template>
 <!-- TODO: create logic with isActive prop for BottomNavigationItems -->
-  <SfBottomNavigation class="navigation-bottom smartphone-only">
-    <nuxt-link to="/">
-      <SfBottomNavigationItem
-        :class="$route.path == '/' ? 'sf-bottom-navigation__item--active' : ''"
-        icon="home" size="20px" label="Home"
-        @click="isMobileMenuOpen ? toggleMobileMenu() : false"
-      />
-    </nuxt-link>
-    <SfBottomNavigationItem icon="menu" size="20px" label="Menu" @click="toggleMobileMenu"/>
-    <SfBottomNavigationItem icon="heart" size="20px" label="Wishlist" @click="toggleWishlistSidebar"/>
-    <SfBottomNavigationItem icon="profile" size="20px" label="Account" @click="handleAccountClick"/>
-    <!-- TODO: add logic for label - if on Home then Basket, if on PDC then AddToCart etc. -->
-    <SfBottomNavigationItem
-      label="Basket"
-      icon="add_to_cart"
-      @click="toggleCartSidebar"
-    >
-      <template #icon>
-        <SfCircleIcon aria-label="Add to cart">
-          <SfIcon
-            icon="add_to_cart"
-            color="white"
-            size="25px"
-            :style="{margin: '0 0 0 -2px'}"
-          />
-        </SfCircleIcon>
-      </template>
-    </SfBottomNavigationItem>
+  <SfBottomNavigation class="navigation-bottom smartphone-only"
+                      style="background-color: hotpink"
+                      v-show="isAccountMenuOpen">
+    <div class="row h-100"
+         @click="toggleCartSidebar">
+	    <div class="flex col-1">
+		    <p>
+		    <SfIcon
+			    icon="added_to_cart"
+			    color="white"
+			    size="25px"
+			    class="display-inline-block"
+		    />
+		    </p>
+		    <p class="display-inline-block left-title" style="">
+			    {{ $t('Your basket') }} ({{cartCount}})
+		    </p>
+	    </div>
+	    <div class="flex col-2">
+		    <p v-if="cartAmount" class="display-inline-block right-title">
+			    €{{ cartAmount }}
+		    </p>
+		    <p>
+		    <SfIcon
+			    icon="chevron_right"
+			    color="white"
+			    size="25px"
+			    class="display-inline-block"
+		    />
+		    </p>
+	    </div>
+    </div>
   </SfBottomNavigation>
 </template>
 
@@ -43,7 +47,7 @@ export default {
     SfCircleIcon
   },
   setup(props, { root }) {
-    const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen } = useUiState();
+    const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen, isAccountMenuOpen } = useUiState();
     const { isAuthenticated } = useUser();
 
     const handleAccountClick = async () => {
@@ -55,16 +59,47 @@ export default {
 
     return {
       isMobileMenuOpen,
+	    isAccountMenuOpen,
       toggleWishlistSidebar,
       toggleCartSidebar,
       toggleMobileMenu,
       handleAccountClick
     };
-  }
+  },
+	data() {
+  	return {
+		  cartCount: 3,
+		  cartAmount: 31.5,
+	  }
+	}
 };
 </script>
 <style lang="scss" scoped>
 .navigation-bottom {
   --bottom-navigation-z-index: 3;
+}
+.col-1 {
+	width: 60%;
+	text-align: start;
+	justify-content: flex-start;
+}
+.col-2 {
+	width: 40%;
+	text-align: end;
+	justify-content: flex-end;
+}
+.left-title {
+	margin-left: 1rem;
+	color: white;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 20px;
+}
+.right-title {
+	margin-right: 1rem;
+	color: white;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 18px;
 }
 </style>

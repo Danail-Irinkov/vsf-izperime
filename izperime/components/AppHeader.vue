@@ -1,21 +1,36 @@
 <template>
   <div>
     <SfHeader
-      class="sf-header--has-mobile-search"
+      class="sf-header--has-mobile-search app-header"
       :class="{'header-on-top': isSearchOpen}"
       :isNavVisible="isMobileMenuOpen"
     >
       <!-- TODO: add mobile view buttons after SFUI team PR -->
       <template #logo>
         <nuxt-link :to="localePath('/')" class="sf-header__logo">
-          <SfImage src="/icons/logo.svg" alt="Vue Storefront Next" class="sf-header__logo-image"/>
+          <SfImage src="/icons/logolaundr.png" alt="Vue Storefront Next" class="sf-header__logo-image"/>
         </nuxt-link>
       </template>
       <template #navigation>
         <HeaderNavigation :isMobile="isMobile" />
       </template>
       <template #aside>
-        <StoreLocaleSelector class="smartphone-only" />
+	      <SfButton
+		      class="sf-button--pure izperime-header-icons"
+		      @click="toggleSearchModal">
+	          <span class="sf-search-bar__icon">
+	            <SfIcon color="var(--c-text)" size="20px" icon="search" />
+	          </span>
+	      </SfButton>
+	      <SfButton
+		      class="sf-button--pure izperime-header-icons"
+		      @click="toggleAccountModal">
+	          <span class="sf-search-bar__icon">
+	            <SfIcon color="var(--c-text)" size="20px" icon="profile" />
+	          </span>
+	      </SfButton>
+
+        <StoreLocaleSelector class="smartphone-only izperime-header-icons" />
       </template>
       <template #header-icons>
         <div class="sf-header__icons">
@@ -54,43 +69,33 @@
         </div>
       </template>
       <template #search>
-        <SfSearchBar
+        <SfSearchBar v-if="isSearchOpen"
           ref="searchBarRef"
-          :placeholder="$t('Search for items')"
+          :placeholder="$t('Start typing to search')"
           aria-label="Search"
           class="sf-header__search"
-          :value="term"
+          :value="searchTerm"
           @input="handleSearch"
           @keydown.enter="handleSearch($event)"
-          @focus="isSearchOpen = true"
           @keydown.esc="closeSearch"
           v-click-outside="closeSearch"
         >
           <template #icon>
             <SfButton
-              v-if="!!term"
               class="sf-search-bar__button sf-button--pure"
-              @click="closeOrFocusSearchBar"
+              @click="toggleSearchModal"
             >
               <span class="sf-search-bar__icon">
-                <SfIcon color="var(--c-text)" size="18px" icon="cross" />
-              </span>
-            </SfButton>
-            <SfButton
-              v-else
-              class="sf-search-bar__button sf-button--pure"
-              @click="isSearchOpen ? isSearchOpen = false : isSearchOpen = true"
-            >
-              <span class="sf-search-bar__icon">
-                <SfIcon color="var(--c-text)" size="20px" icon="search" />
+                <SfIcon color="var(--c-text)" size="20px" icon="cross" />
               </span>
             </SfButton>
           </template>
         </SfSearchBar>
+	      <div v-else></div>
       </template>
     </SfHeader>
-    <SearchResults :visible="isSearchOpen" :result="result" @close="closeSearch" @removeSearchResults="removeSearchResults" />
-    <SfOverlay :visible="isSearchOpen" />
+    <SearchResults v-if="isSearchOpen" :visible="isSearchOpen" :result="result" @close="closeSearch" @removeSearchResults="removeSearchResults" />
+<!--    <SfOverlay :visible="isSearchOpen" />-->
   </div>
 </template>
 
@@ -124,15 +129,15 @@ export default {
     SfOverlay,
     SfMenuItem,
     SfLink,
-    HeaderNavigation
+    HeaderNavigation,
   },
   directives: { clickOutside },
   setup(props, { root }) {
-    const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
+    const { setServiceModal, currentServiceModal, toggleCartSidebar, toggleAccountModal, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
     const { setTermForUrl, getFacetsFromURL } = useUiHelpers();
     const { isAuthenticated, load: loadUser } = useUser();
     const { cart } = useCart();
-    const term = ref(getFacetsFromURL().phrase);
+    const searchTerm = ref(getFacetsFromURL().phrase);
     const isSearchOpen = ref(false);
     const searchBarRef = ref(null);
     const result = ref(null);
@@ -156,18 +161,23 @@ export default {
       toggleLoginModal();
     };
 
+    const closeServiceModal = () => {
+    	console.log('closeServiceModal')
+	    setServiceModal(null)
+    };
+
     const closeSearch = () => {
       if (!isSearchOpen.value) return;
 
-      term.value = '';
+      searchTerm.value = '';
       isSearchOpen.value = false;
     };
 
     const handleSearch = debounce(async (paramValue) => {
       if (!paramValue.target) {
-        term.value = paramValue;
+        searchTerm.value = paramValue;
       } else {
-        term.value = paramValue.target.value;
+        searchTerm.value = paramValue.target.value;
       }
       result.value = mockedSearchProducts;
 
@@ -176,14 +186,15 @@ export default {
     const closeOrFocusSearchBar = () => {
       if (isMobile.value) {
         return closeSearch();
-      } else {
-        term.value = '';
-        return searchBarRef.value.$el.children[0].focus();
       }
+      // else {
+      //   searchTerm.value = '';
+      //   return searchBarRef.value.$el.children[0].focus();
+      // }
     };
 
-    watch(() => term.value, (newVal, oldVal) => {
-      const shouldSearchBeOpened = (!isMobile.value && term.value.length > 0) && ((!oldVal && newVal) || (newVal.length !== oldVal.length && isSearchOpen.value === false));
+    watch(() => searchTerm.value, (newVal, oldVal) => {
+      const shouldSearchBeOpened = (!isMobile.value && searchTerm.value.length > 0) && ((!oldVal && newVal) || (newVal.length !== oldVal.length && isSearchOpen.value === false));
       if (shouldSearchBeOpened) {
         isSearchOpen.value = true;
       }
@@ -198,13 +209,17 @@ export default {
     });
 
     return {
+	    setServiceModal,
+	    currentServiceModal,
+	    closeServiceModal,
       accountIcon,
       cartTotalItems,
       handleAccountClick,
       toggleCartSidebar,
+	    toggleAccountModal,
       toggleWishlistSidebar,
       setTermForUrl,
-      term,
+      searchTerm,
       isSearchOpen,
       closeSearch,
       handleSearch,
@@ -215,11 +230,24 @@ export default {
       isMobileMenuOpen,
       removeSearchResults
     };
-  }
+  },
+	methods: {
+  	toggleSearchModal() {
+  		console.log('toggleSearchModal')
+  		this.isSearchOpen = !this.isSearchOpen
+	  }
+	}
 };
 </script>
 
 <style lang="scss" scoped>
+.izperime-header-icons {
+	margin: 0px 5px;
+	display: inline-block;
+	flex-wrap: nowrap;
+	align-items: center;
+	position: relative;
+}
 .sf-header {
   --header-padding:  var(--spacer-sm);
   @include for-desktop {
@@ -243,5 +271,15 @@ export default {
   position: absolute;
   bottom: 40%;
   left: 40%;
+}
+::v-deep .sf-header__header {
+		padding-top: 5px!important;
+		padding-bottom: 0px!important;
+}
+::v-deep .app-header {
+	--header-box-shadow: none!important;
+	& > .sf-header__wrapper {
+		background-color: var(--c-light) !important;
+	}
 }
 </style>
