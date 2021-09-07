@@ -37,60 +37,11 @@
 		      {{ $t(service.description) }}
 	      </p>
 	      <div>
-		      <h4 class="sub_products_title">
+		      <h4 class="products_title">
 			      {{ $t(service.title) }}
 		      </h4>
-		      <div v-for="sub_p in service.sub_products" class="row sub_product_row">
-			      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
-			      <div class="column" style="flex-grow: 1; margin-top: 6px">
-				      <p class="sub_product__title">
-					      {{ $t(sub_p.title) }}
-				      </p>
-				      <p class="sub_product__description" v-if="sub_p.description">
-					      {{ $t(sub_p.description) }}
-				      </p>
-				      <ul class="sub_product__bullets" v-if="sub_p.bullets">
-					      <li v-for="bullet of sub_p.bullets">
-						      {{ $t(bullet)}}
-					      </li>
-				      </ul>
-			      </div>
-			      <div class="column" style="flex-shrink: 1; min-width: 107px; margin-top: 6px">
-				      <p class="sub_product_price" style="text-align: end">
-					      {{ $t(sub_p.price) }}€
-				      </p>
-				      <div class="row align-end" style="text-align: end">
-					      <SfCircleIcon
-						      v-if="sub_p.quantity"
-						      class="add_circle_icon"
-						      :class="{'add_circle_icon_fill': sub_p.quantity}"
-						      :aria-label="$t('Remove')"
-						      :style="{margin: '.5rem'}"
-						      @click="decrementQuantity(sub_p)">
-						      <SfIcon
-							      icon="minus"
-							      :color="sub_p.quantity ? 'white' : 'hotpink'"
-							      size="16px"
-						      />
-					      </SfCircleIcon>
-					      <p class="sub_product__quantity"
-					         v-if="sub_p.quantity">
-						      {{ $t(sub_p.quantity) }}
-					      </p>
-					      <SfCircleIcon
-						      class="add_circle_icon"
-						      :class="{'add_circle_icon_fill': sub_p.quantity}"
-						      :aria-label="$t('Add')"
-						      :style="{margin: '.5rem'}"
-						      @click="incrementQuantity(sub_p)">
-						      <SfIcon
-							      icon="plus"
-							      :color="sub_p.quantity ? 'white' : 'hotpink'"
-							      size="16px"
-						      />
-					      </SfCircleIcon>
-				      </div>
-			      </div>
+		      <div v-for="product in service.products">
+			      <BasketProduct :product="product"></BasketProduct>
 		      </div>
 	      </div>
 	      <div v-if="service.faqs && service.faqs.length">
@@ -135,7 +86,9 @@ import {
 import { ref, watch, computed } from '@vue/composition-api';
 import { productGetters } from '@vue-storefront/commercetools';
 import { useUiState } from '~/composables';
+import BasketProduct  from '~/components/izperime/BasketProduct';
 import { Collapse, CollapseItem } from 'element-ui'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'ServiceModal',
@@ -145,6 +98,7 @@ export default {
 	  SfModal,
 	  SfIcon,
 	  SfCircleIcon,
+	  BasketProduct,
 	  Collapse, CollapseItem,
   },
   props: {
@@ -165,19 +119,6 @@ export default {
 	methods: {
 		closeServiceModal() {
 			this.setServiceModal(null)
-		},
-		decrementQuantity(product) {
-			product.quantity--
-			this.$forceUpdate()
-			// let sub_p_index = this.product.sub_products.findIndex(sub_p => sub_p._id === product._id)
-			// this.product.sub_products[sub_p_index].quantity--
-		},
-		incrementQuantity(product) {
-			if(!product.quantity) product.quantity = 0
-			product.quantity++
-			this.$forceUpdate()
-			// let sub_p_index = this.product.sub_products.findIndex(sub_p => sub_p._id === product._id)
-			// this.product.sub_products[sub_p_index].quantity++
 		},
 	},
 	watch: {
@@ -219,6 +160,8 @@ export default {
 	@import "assets/scss/animations";
 </style>
 <style lang="scss" scoped>
+	::v-deep .sf-modal__container {
+	}
 	.service-modal {
 		height: 100vh;
 		overflow-y: hidden;
@@ -240,66 +183,18 @@ export default {
 	background-size: cover;
 }
 
-	.sub_product_row {
-		border-top: 1px;
-		border-color: #4B5563;
-
-	}
-	.add_circle_icon {
-		height: 33px;
-		width: 33px;
-		border-width: 1px;
-		border-color: hotpink;
-		background-color: transparent;
-	}
-	.add_circle_icon_fill {
-		border-color: hotpink;
-		background-color: hotpink;
-	}
-	.sub_product_price {
-		align-content: end;
-		justify-content: flex-end;
-		padding-right: 2px;
-		text-align: end!important;
-		font-weight: 600;
-	}
 	.product__description {
 		margin-bottom: 14px;
 		color: #1b1b23;
 		font-weight: 600;
 	}
-	.sub_product__title {
-		color: #1b1b23;
-		font-weight: 600;
-		margin-bottom: 0px;
-	}
-	.sub_products_title {
+	.products_title {
 		color: #828282;
 		font-weight: 800;
-	}
-	.sub_product__description {
-		color: #4B5563;
-		font-weight: 400;
-	}
-	.sub_product__quantity {
-		justify-content: flex-end;
-		margin: auto 1rem auto 1rem;
-		text-align: end!important;
-		font-weight: 600;
-	}
-	.align-end {
-		align-content: end;
-		justify-content: flex-end;
-		text-align: end!important;
 	}
 	p {
 		margin-top: 8px;
 		margin-bottom: 8px;
-	}
-	.sub_product__bullets {
-		padding-left: 30px!important;
-		margin-top: 0;
-		margin-bottom: 0;
 	}
 	.product__faqs {
 		margin-top: 28px;

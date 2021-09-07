@@ -60,7 +60,7 @@ export default {
           },
           price: 15,
           currency: 'EUR',
-	        sub_products: [
+	        products: [
 	        	{
 	        		_id: 11,
         		  title: 'High Five',
@@ -161,7 +161,7 @@ export default {
 		      },
 		      price: 15,
 		      currency: 'EUR',
-		      sub_products: [
+		      products: [
 			      {
 				      _id: 11,
 				      title: 'Trousers',

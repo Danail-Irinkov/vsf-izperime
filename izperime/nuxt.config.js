@@ -53,6 +53,7 @@ export default {
   },
   buildModules: [
     // to core
+	  '@nuxtjs/moment',
     '@nuxt/typescript-build',
     '@nuxtjs/style-resources',
     // to core soon
@@ -81,6 +82,10 @@ export default {
     'vue-scrollto/nuxt',
     '@vue-storefront/middleware/nuxt'
   ],
+	moment: {
+		defaultLocale: 'bg',
+		locales: ['bg']
+	},
   i18n: {
     currency: 'USD',
     country: 'US',

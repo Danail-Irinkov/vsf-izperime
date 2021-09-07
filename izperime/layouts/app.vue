@@ -3,8 +3,9 @@
       <AppHeader />
       <nuxt />
       <BottomNavigation />
-      <CartSidebar />
+      <BasketSidebar />
 	    <ServiceModal/>
+	    <BasketTimeSlotModal/>
 	    <AccountModal/>
 	    <LoginModal />
   </div>
@@ -14,9 +15,10 @@
 import AppHeader from '~/components/AppHeader.vue';
 import BottomNavigation from '~/components/BottomNavigation.vue';
 import TopBar from '~/components/TopBar.vue';
-import CartSidebar from '~/components/CartSidebar.vue';
+import BasketSidebar from '~/components/izperime/BasketSidebar.vue';
 import LoginModal from '~/components/LoginModal.vue';
 import ServiceModal from '~/components/izperime/ServiceModal';
+import BasketTimeSlotModal from '~/components/izperime/BasketTimeSlotModal';
 import AccountModal from '~/components/izperime/AccountModal';
 
 export default {
@@ -26,8 +28,9 @@ export default {
     TopBar,
     AppHeader,
     BottomNavigation,
-    CartSidebar,
+    BasketSidebar,
 	  ServiceModal,
+	  BasketTimeSlotModal,
 	  AccountModal,
     LoginModal
   }

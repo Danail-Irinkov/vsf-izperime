@@ -1,6 +1,6 @@
 <template>
 	<SfModal
-		v-e2e="'service-modal'"
+		v-e2e="'account-modal'"
 		:visible="isAccountModalOpen"
 		class="modal"
 		transitionOverlay="sf-fade"

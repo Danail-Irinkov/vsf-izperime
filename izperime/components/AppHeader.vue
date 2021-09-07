@@ -30,7 +30,7 @@
 	          </span>
 	      </SfButton>
 
-        <StoreLocaleSelector class="smartphone-only izperime-header-icons" />
+        <StoreLocaleSelector class="izperime-header-icons" />
       </template>
       <template #header-icons>
         <div class="sf-header__icons">
@@ -57,7 +57,7 @@
           <SfButton
             v-e2e="'app-header-cart'"
             class="sf-button--pure sf-header__action"
-            @click="toggleCartSidebar"
+            @click="toggleBasketSidebar"
           >
             <SfIcon
               class="sf-header__icon"
@@ -133,7 +133,7 @@ export default {
   },
   directives: { clickOutside },
   setup(props, { root }) {
-    const { setServiceModal, currentServiceModal, toggleCartSidebar, toggleAccountModal, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
+    const { setServiceModal, currentServiceModal, toggleBasketSidebar, toggleAccountModal, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
     const { setTermForUrl, getFacetsFromURL } = useUiHelpers();
     const { isAuthenticated, load: loadUser } = useUser();
     const { cart } = useCart();
@@ -215,7 +215,7 @@ export default {
       accountIcon,
       cartTotalItems,
       handleAccountClick,
-      toggleCartSidebar,
+	    toggleBasketSidebar,
 	    toggleAccountModal,
       toggleWishlistSidebar,
       setTermForUrl,
@@ -241,6 +241,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	::v-deep .sf-header__actions {
+		display: none;
+	}
 .izperime-header-icons {
 	margin: 0px 5px;
 	display: inline-block;

@@ -11,6 +11,9 @@ const state = reactive({
 	is_new_hover_set: false,
 	currentServiceModal: null,
 	isAccountModalOpen: false,
+	isBasketSidebarOpen: false,
+	isBasketTimeSlotModalOpen: false,
+	currentTimeSlot: 'collection',
 	// Original States
   isCartSidebarOpen: false,
   isWishlistSidebarOpen: false,
@@ -67,6 +70,20 @@ const useUiState = () => {
     state.isCartSidebarOpen = !state.isCartSidebarOpen;
   };
 
+  const isBasketSidebarOpen = computed(() => state.isBasketSidebarOpen);
+  const toggleBasketSidebar = () => {
+    state.isBasketSidebarOpen = !state.isBasketSidebarOpen;
+  };
+
+  const isBasketTimeSlotModalOpen = computed(() => state.isBasketTimeSlotModalOpen);
+  const currentTimeSlot = computed(() => state.currentTimeSlot);
+  const toggleBasketTimeSlotModal = (currentTimeSlot) => {
+  	console.log('toggleBasketTimeSlotModal START', isBasketTimeSlotModalOpen.value)
+    state.currentTimeSlot = currentTimeSlot
+    state.isBasketTimeSlotModalOpen = !state.isBasketTimeSlotModalOpen;
+	  console.log('toggleBasketTimeSlotModal START', isBasketTimeSlotModalOpen.value)
+  };
+
   const isWishlistSidebarOpen = computed(() => state.isWishlistSidebarOpen);
   const toggleWishlistSidebar = () => {
     if (state.isMobileMenuOpen) toggleMobileMenu();
@@ -106,6 +123,11 @@ const useUiState = () => {
 	  currentServiceModal,
 	  isAccountModalOpen,
 	  toggleAccountModal,
+	  isBasketSidebarOpen,
+	  toggleBasketSidebar,
+	  isBasketTimeSlotModalOpen,
+	  toggleBasketTimeSlotModal,
+	  currentTimeSlot,
 	  // Original VSF states
     isCartSidebarOpen,
     isWishlistSidebarOpen,

@@ -48,7 +48,7 @@ export default {
 	  ServiceItem,
   },
   setup(props, { root }) {
-    const { activeServiceCategory, hoverServiceCategory, toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen } = useUiState();
+    const { activeServiceCategory, hoverServiceCategory, toggleBasketSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen } = useUiState();
     const { isAuthenticated } = useUser();
 
     const handleAccountClick = async () => {
@@ -63,7 +63,7 @@ export default {
 	    hoverServiceCategory,
       isMobileMenuOpen,
       toggleWishlistSidebar,
-      toggleCartSidebar,
+	    toggleBasketSidebar,
       toggleMobileMenu,
       handleAccountClick
     };

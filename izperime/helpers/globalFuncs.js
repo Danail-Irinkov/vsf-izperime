@@ -3,3 +3,7 @@ export function sleep(ms) {
 		setTimeout(resolve, ms)
 	})
 }
+
+export function capitalizeFirstLetter(string) {
+	return string ? string.charAt(0).toUpperCase() + string.slice(1) : ''
+}

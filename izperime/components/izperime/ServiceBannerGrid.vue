@@ -23,3 +23,11 @@ export default {
 <style lang="scss">
 @import "~@storefront-ui/shared/styles/components/organisms/SfBannerGrid.scss";
 </style>
+<style lang="scss">
+	.sf-banner-grid__col {
+		flex: auto;
+		& > section {
+			flex: auto!important;
+		}
+	}
+</style>

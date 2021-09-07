@@ -4,7 +4,7 @@
                       style="background-color: hotpink"
                       v-show="isAccountMenuOpen">
     <div class="row h-100"
-         @click="toggleCartSidebar">
+         @click="toggleBasketSidebar">
 	    <div class="flex col-1">
 		    <p>
 		    <SfIcon
@@ -39,6 +39,7 @@
 import { SfBottomNavigation, SfIcon, SfCircleIcon } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
 import { useUser } from '@vue-storefront/commercetools';
+import {mapGetters} from "vuex";
 
 export default {
   components: {
@@ -47,7 +48,7 @@ export default {
     SfCircleIcon
   },
   setup(props, { root }) {
-    const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen, isAccountMenuOpen } = useUiState();
+    const { toggleBasketSidebar, toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen, isAccountMenuOpen } = useUiState();
     const { isAuthenticated } = useUser();
 
     const handleAccountClick = async () => {
@@ -62,15 +63,20 @@ export default {
 	    isAccountMenuOpen,
       toggleWishlistSidebar,
       toggleCartSidebar,
+	    toggleBasketSidebar,
       toggleMobileMenu,
       handleAccountClick
     };
   },
 	data() {
   	return {
-		  cartCount: 3,
-		  cartAmount: 31.5,
 	  }
+	},
+	computed: {
+		...mapGetters({
+			cartCount: 'cartCount',
+			cartAmount: 'cartAmount',
+		}),
 	}
 };
 </script>

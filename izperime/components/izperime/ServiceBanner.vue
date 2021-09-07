@@ -76,6 +76,7 @@ export default {
 	min-height: 175px;
 }
 .sf-banner__wrapper {
+	flex: 0 0 100%;
 	padding: 0;
 	align-self: flex-end;
 	position: relative;
