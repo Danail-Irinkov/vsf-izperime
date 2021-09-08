@@ -201,7 +201,7 @@ import { ref, watch, reactive, computed } from '@vue/composition-api';
 import { SfModal, SfInput, SfButton, SfCheckbox, SfLoader, SfAlert, SfBar } from '@storefront-ui/vue';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
-import { useUser, useForgotPassword } from '@vue-storefront/commercetools';
+import { userState } from '~/composables';
 import { useUiState } from '~/composables';
 
 extend('email', {
@@ -236,8 +236,7 @@ export default {
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
-    const { register, login, loading, error: userError } = useUser();
-    const { request, error: forgotPasswordError, loading: forgotPasswordLoading } = useForgotPassword();
+    const { authUser, register, login, loading, userError, requestNewPass, forgotPasswordError, forgotPasswordLoading } = userState();
 
     const error = reactive({
       login: null,
@@ -301,7 +300,7 @@ export default {
 
     const handleForgotten = async () => {
       userEmail.value = form.value.username;
-      await request({ email: userEmail.value });
+      await requestNewPass({ email: userEmail.value });
 
       if (!forgotPasswordError.value.request) {
         isThankYouAfterForgotten.value = true;
@@ -330,6 +329,7 @@ export default {
       closeModal,
       isThankYouAfterForgotten,
       userEmail,
+	    authUser,
       barTitle
     };
   }

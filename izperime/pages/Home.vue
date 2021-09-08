@@ -10,7 +10,8 @@
 	  </div>
 	  <div class="w-100 h-100 vertical-align-container" v-else>
 		  <transition name="sf-fade" mode="out-in">
-			  <div class="vertical-align-child" v-if="appReady" style="transition-duration: 300ms">
+			  <div class="vertical-align-child" v-if="appReady"
+			       style="transition-duration: 300ms">
 				  <v-select
 					  class="initial-city-select"
 					  v-model="city"
@@ -33,6 +34,7 @@ import cacheControl from './../helpers/cacheControl';
 import { SfImage } from '@storefront-ui/vue';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import {mapGetters, mapMutations} from "vuex";
 export default {
   name: 'Home',
   layout: 'blank',
@@ -54,17 +56,27 @@ export default {
     }
   },
 	async mounted() {
+  	this.city = String(this.getCity)
   	await this.sleep(500)
 		this.showLogo = true
   	await this.sleep(2000)
 		this.appReady = true
 	},
 	methods: {
+		...mapMutations({
+			getCity: 'getCity',
+		}),
 		citySelected() {
 			console.log('citySelected Started')
+			this.setCity(String(this.city))
 			this.$router.push({path: 'servicelist'});
 		}
-  }
+  },
+	computed: {
+		...mapGetters({
+			setCity: 'setCity',
+		}),
+	}
 };
 </script>
 

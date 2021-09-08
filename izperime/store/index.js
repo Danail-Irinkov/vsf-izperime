@@ -1,6 +1,7 @@
 import Vue from 'vue'
 export const state = () => ({
 	user: {},
+	city: '',
 	cart: {},
 	timeslots: {
 		collection: {
@@ -17,6 +18,9 @@ export const state = () => ({
 })
 
 export const getters = {
+	getCity(state) {
+		return state.city
+	},
 	getTimeSlots(state) {
 		return state.timeslots
 	},
@@ -42,6 +46,9 @@ export const getters = {
 	}
 }
 export const mutations = {
+	setCity(state, city) {
+		Vue.set(state, 'city', city)
+	},
 	addToCart(state, product) {
 		console.log('addToCart state', state)
 		console.log('addToCart product', product)

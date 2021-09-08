@@ -46,15 +46,13 @@
                 />
               </template>
             </SfProperty>
-            <nuxt-link :to="localePath({ name: 'shipping' })">
-              <SfButton
-                v-e2e="'go-to-checkout-btn'"
-                class="sf-button--full-width place-order-button color-izperime"
-                @click="placeOrder"
-              >
-                {{ $t('Place Order') }}
-              </SfButton>
-            </nuxt-link>
+            <SfButton
+              v-e2e="'go-to-checkout-btn'"
+              class="sf-button--full-width place-order-button color-izperime"
+              @click="placeOrder"
+            >
+              {{ $t('Place Order') }}
+            </SfButton>
           </div>
           <div v-else>
             <SfButton
@@ -97,7 +95,7 @@ export default {
     SfPrice,
   },
   setup() {
-    const { isBasketSidebarOpen, toggleBasketSidebar } = useUiState();
+    const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
     const { isAuthenticated } = useUser();
     const products = computed(() => cartGetters.getItems(cart.value));
@@ -113,6 +111,7 @@ export default {
       updateItemQty,
       isBasketSidebarOpen,
 	    toggleBasketSidebar,
+	    toggleLoginModal,
       totals,
       totalItems,
       cartGetters
@@ -138,6 +137,9 @@ export default {
 	},
 	methods: {
 		placeOrder() {
+			console.log('placeOrder Start')
+
+			this.toggleLoginModal()
 
 		}
 	},
