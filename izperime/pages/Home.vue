@@ -56,7 +56,7 @@ export default {
     }
   },
 	async mounted() {
-  	this.city = String(this.getCity)
+		this.city = String(this.getCity)
   	await this.sleep(500)
 		this.showLogo = true
   	await this.sleep(2000)
@@ -64,7 +64,7 @@ export default {
 	},
 	methods: {
 		...mapMutations({
-			getCity: 'getCity',
+			setCity: 'setCity',
 		}),
 		citySelected() {
 			console.log('citySelected Started')
@@ -74,7 +74,7 @@ export default {
   },
 	computed: {
 		...mapGetters({
-			setCity: 'setCity',
+			getCity: 'getCity',
 		}),
 	}
 };
