@@ -49,8 +49,8 @@
             <nuxt-link :to="localePath({ name: 'shipping' })">
               <SfButton
                 v-e2e="'go-to-checkout-btn'"
-                class="sf-button--full-width color-secondary"
-                @click="toggleBasketSidebar"
+                class="sf-button--full-width place-order-button color-izperime"
+                @click="placeOrder"
               >
                 {{ $t('Place Order') }}
               </SfButton>
@@ -58,7 +58,7 @@
           </div>
           <div v-else>
             <SfButton
-              class="sf-button--full-width color-primary"
+              class="sf-button--full-width place-order-button color-info"
               @click="toggleBasketSidebar"
             >{{ $t('Go back shopping') }}</SfButton
             >
@@ -135,6 +135,11 @@ export default {
 		  },
 		  cleaningInstructions: ''
 	  }
+	},
+	methods: {
+		placeOrder() {
+
+		}
 	},
 	computed: {
 		...mapGetters({
@@ -248,4 +253,12 @@ export default {
     }
   }
 }
+	.place-order-button {
+		position: fixed;
+		bottom: 8px;
+		width: 90vw;
+		border-radius: 5px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
 </style>

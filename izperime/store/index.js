@@ -3,8 +3,16 @@ export const state = () => ({
 	user: {},
 	cart: {},
 	timeslots: {
-		collection: {},
-		delivery: {}
+		collection: {
+			selectedDate: 0,
+			selectedDay: 0,
+			selectedTimeslot: {},
+		},
+		delivery: {
+			selectedDate: 0,
+			selectedDay: 0,
+			selectedTimeslot: {},
+		}
 	}
 })
 

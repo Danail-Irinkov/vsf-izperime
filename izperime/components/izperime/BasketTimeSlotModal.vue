@@ -21,7 +21,7 @@
 	      <div class="day-selector">
 		      <div class="day-item"
 		           v-for="day in availableDays"
-		           :class="{'day-selected': selectedDay === day.date}"
+		           :class="{'day-selected': timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay === day.date}"
 		           @click="selectDay(day)"
 		      >
 			      <span>{{ day.letter }}</span>
@@ -31,8 +31,12 @@
 
 	      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
 
-	      <div class="timeslot-selector" style="margin-top: 2rem">
-		      <div class="w-100 available-timeslots" v-for="timeslot in availableTimeSlots">
+	      <div class="timeslot-selector" style="margin-top: 2rem" v-if="timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay">
+		      <div class="available-timeslots"
+		           :class="{ 'timeslot-selected': timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedTimeslot && timeslots[currentTimeSlot].selectedTimeslot.from === timeslot.from  && timeslots[currentTimeSlot].selectedTimeslot.to === timeslot.to }"
+		           v-for="timeslot in availableTimeSlots"
+		           @click="selectTimeslot(timeslot)"
+		      >
 			      <span style="margin-right: 1rem">{{ timeslot.from }}</span>
 
 			      <SfIcon style="display: inline-block"
@@ -60,6 +64,8 @@ import { useUiState } from '~/composables';
 import BasketProduct  from '~/components/izperime/BasketProduct';
 import { Collapse, CollapseItem } from 'element-ui'
 import { capitalizeFirstLetter } from '~/helpers/globalFuncs';
+import {mapGetters, mapMutations} from "vuex";
+import _cloneDeep from "lodash.clonedeep";
 
 export default {
   name: 'BasketTimeSlotModal',
@@ -74,7 +80,18 @@ export default {
   },
 	data() {
   	return {
-		  selectedDay: 0,
+		  timeslots: {
+			  collection: {
+				  selectedDate: 0,
+				  selectedDay: 0,
+				  selectedTimeslot: {},
+			  },
+			  delivery: {
+				  selectedDate: 0,
+				  selectedDay: 0,
+				  selectedTimeslot: {},
+			  }
+		  },
 		  currentBodyScroll: 0,
 		  availableTimeSlots: [
 			  {
@@ -131,10 +148,22 @@ export default {
 	    capFirst,
     };
   },
+	mounted () {
+  	this.timeslots = _cloneDeep(this.getTimeSlots)
+	},
 	methods: {
+		...mapMutations({
+			setTimeSlots: 'setTimeSlots',
+		}),
 		selectDay(day) {
-			this.selectedDay = day.date
-		}
+			this.timeslots[this.currentTimeSlot].selectedDay = day.date
+			this.timeslots[this.currentTimeSlot].selectedDate = day.full_date
+		},
+		selectTimeslot(timeslot) {
+			this.timeslots[this.currentTimeSlot].selectedTimeslot = timeslot
+			this.setTimeSlots(_cloneDeep(this.timeslots))
+			this.toggleBasketTimeSlotModal()
+		},
 	},
 	watch: {
   	currentServiceModal(service){
@@ -151,14 +180,18 @@ export default {
 	  }
 	},
 	computed: {
+		...mapGetters({
+			getTimeSlots: 'getTimeSlots',
+		}),
   	availableDays() {
   		let days = []
 
 		  for (let i = 0; i < 7; i++) {
+		  	let full_date = this.$moment().add(i, 'd').format()
 		  	let date = this.$moment().add(i, 'd').format('D')
 		  	let letter = this.capFirst(this.$moment().add(i, 'd').format('ddd'))
 			  days.push({
-				  letter, date
+				  full_date, date, letter
 			  })
 		  }
 
@@ -206,7 +239,9 @@ export default {
 	.available-timeslots {
 		display: flex;
 		flex-direction: row;
-		height: 40px;
+		margin: 1rem 0rem;
+		padding: 4px 5px;
+		border-radius: 5px;
 		vertical-align: center;
 		& > span {
 			display: inline-block;
@@ -221,5 +256,13 @@ export default {
 		border-radius: 5px;
 		font-size: 16px;
 		line-height: 26px;
+	}
+	.timeslot-selected {
+		background-color: rgba(255, 105, 180, 0.34);
+		color: white;
+		& > .timeslot-status {
+			background-color: white;
+			color: hotpink;
+		}
 	}
 </style>

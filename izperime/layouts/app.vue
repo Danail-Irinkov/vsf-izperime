@@ -1,5 +1,5 @@
 <template>
-  <div id="layout" >
+  <div id="layout">
       <AppHeader />
       <nuxt />
       <BottomNavigation />

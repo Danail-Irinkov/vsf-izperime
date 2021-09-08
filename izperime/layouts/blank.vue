@@ -14,6 +14,7 @@ export default {
 
 <style lang="scss">
 @import "~@storefront-ui/vue/styles";
+@import "assets/scss/global";
 
 #layout {
   box-sizing: border-box;

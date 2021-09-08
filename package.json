@@ -46,6 +46,9 @@
     "test:e2e:ct:generate:report": "cd packages/commercetools/theme && yarn run test:e2e:generate:report",
     "test:e2e:ct:hl": "cd packages/commercetools/theme && yarn run test:e2e:hl"
   },
+  "dependencies": {
+	  "lodash.clonedeep": "^4.5.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.10.5",
     "@commitlint/cli": "^13.1.0",

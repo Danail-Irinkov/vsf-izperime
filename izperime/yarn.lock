@@ -12418,6 +12418,11 @@ vue-scrollto@^2.17.1:
   dependencies:
     bezier-easing "2.1.0"
 
+vue-select@^3.13.0:
+  version "3.13.0"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.13.0.tgz#78d519984139156adcbf56af260fb6c2a69093a6"
+  integrity sha512-+PcWtfA1i3WVtkVwBPQknnOZL6QWSD2XiAVbSn0xAQvjOrmGAg7z+o9HkezXhtGdEstloJOdM8SujrUVyphKqg==
+
 vue-server-renderer@^2.6.12:
   version "2.6.12"
   resolved "https://registry.npmjs.org/vue-server-renderer/-/vue-server-renderer-2.6.12.tgz"
