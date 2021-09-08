@@ -11,6 +11,7 @@ const state = reactive({
 	is_new_hover_set: false,
 	currentServiceModal: null,
 	isAccountModalOpen: false,
+	isOrdersModalOpen: false,
 	isBasketSidebarOpen: false,
 	isBasketTimeSlotModalOpen: false,
 	currentTimeSlot: 'collection',
@@ -52,6 +53,11 @@ const useUiState = () => {
 		state.currentServiceModal = service
 	};
 	const currentServiceModal = computed(() => state.currentServiceModal);
+
+	const isOrdersModalOpen = computed(() => state.isOrdersModalOpen);
+	const toggleOrdersModal = () => {
+		state.isOrdersModalOpen = !state.isOrdersModalOpen;
+	};
 
 	const isAccountModalOpen = computed(() => state.isAccountModalOpen);
 	const toggleAccountModal = () => {
@@ -121,8 +127,10 @@ const useUiState = () => {
 	  is_new_hover_set,
 	  setServiceModal,
 	  currentServiceModal,
-	  isAccountModalOpen,
+	  isOrdersModalOpen,
 	  toggleAccountModal,
+	  isAccountModalOpen,
+	  toggleOrdersModal,
 	  isBasketSidebarOpen,
 	  toggleBasketSidebar,
 	  isBasketTimeSlotModalOpen,

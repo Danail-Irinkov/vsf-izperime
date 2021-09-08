@@ -64,7 +64,7 @@ export default {
 	        	{
 	        		_id: 11,
         		  title: 'High Five',
-        		  description: '2x shirts washed, ironed & hung',
+        		  description: '5x shirts washed, ironed & hung',
 			        price: 14,
 			        currency: 'EUR',
 		        },

@@ -5,6 +5,7 @@
       <BottomNavigation />
       <BasketSidebar />
 	    <ServiceModal/>
+	    <OrdersModal/>
 	    <BasketTimeSlotModal/>
 	    <AccountModal/>
 	    <LoginModal />
@@ -18,6 +19,7 @@ import TopBar from '~/components/TopBar.vue';
 import BasketSidebar from '~/components/izperime/BasketSidebar.vue';
 import LoginModal from '~/components/LoginModal.vue';
 import ServiceModal from '~/components/izperime/ServiceModal';
+import OrdersModal from '~/components/izperime/OrdersModal';
 import BasketTimeSlotModal from '~/components/izperime/BasketTimeSlotModal';
 import AccountModal from '~/components/izperime/AccountModal';
 
@@ -30,6 +32,7 @@ export default {
     BottomNavigation,
     BasketSidebar,
 	  ServiceModal,
+	  OrdersModal,
 	  BasketTimeSlotModal,
 	  AccountModal,
     LoginModal

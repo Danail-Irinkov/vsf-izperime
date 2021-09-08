@@ -15,11 +15,18 @@
         <HeaderNavigation :isMobile="isMobile" />
       </template>
       <template #aside>
+<!--	      <SfButton-->
+<!--		      class="sf-button&#45;&#45;pure izperime-header-icons"-->
+<!--		      @click="toggleSearchModal">-->
+<!--	          <span class="sf-search-bar__icon">-->
+<!--	            <SfIcon color="var(&#45;&#45;c-text)" size="20px" icon="search" />-->
+<!--	          </span>-->
+<!--	      </SfButton>-->
 	      <SfButton
 		      class="sf-button--pure izperime-header-icons"
-		      @click="toggleSearchModal">
+		      @click="toggleOrdersModal">
 	          <span class="sf-search-bar__icon">
-	            <SfIcon color="var(--c-text)" size="20px" icon="search" />
+	            <SfIcon color="var(--c-text)" size="20px" icon="list" />
 	          </span>
 	      </SfButton>
 	      <SfButton
@@ -133,7 +140,7 @@ export default {
   },
   directives: { clickOutside },
   setup(props, { root }) {
-    const { setServiceModal, currentServiceModal, toggleBasketSidebar, toggleAccountModal, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
+    const { toggleOrdersModal, isOrdersModalOpen, setServiceModal, currentServiceModal, toggleBasketSidebar, toggleAccountModal, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
     const { setTermForUrl, getFacetsFromURL } = useUiHelpers();
     const { isAuthenticated, load: loadUser } = useUser();
     const { cart } = useCart();
@@ -209,6 +216,8 @@ export default {
     });
 
     return {
+	    toggleOrdersModal,
+	    isOrdersModalOpen,
 	    setServiceModal,
 	    currentServiceModal,
 	    closeServiceModal,

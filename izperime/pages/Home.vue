@@ -156,6 +156,6 @@ export default {
 	width: 100%;
 }
 ::v-deep .vs__search {
-	/*display: none;*/
+	color: rgba(255, 255, 255, 0.5);
 }
 </style>
