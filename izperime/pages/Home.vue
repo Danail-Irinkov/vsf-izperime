@@ -61,6 +61,7 @@ export default {
 		this.showLogo = true
   	await this.sleep(2000)
 		this.appReady = true
+		if (this.city) this.citySelected()
 	},
 	methods: {
 		...mapMutations({

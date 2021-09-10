@@ -40,7 +40,8 @@
 <script>
 import { useUiState } from '~/composables';
 import ServiceItem from '~/components/izperime/ServiceItem';
-import { useUser } from '@vue-storefront/commercetools';
+
+import { userState } from '~/composables';
 
 export default {
 	name: 'ServiceNavigation',
@@ -49,7 +50,7 @@ export default {
   },
   setup(props, { root }) {
     const { activeServiceCategory, hoverServiceCategory, toggleBasketSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen } = useUiState();
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated } = userState();
 
     const handleAccountClick = async () => {
       if (isAuthenticated.value) {

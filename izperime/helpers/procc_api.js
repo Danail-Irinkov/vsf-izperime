@@ -27,27 +27,21 @@ export default (token = '') => {
   })
   api.interceptors.request.use(
     (config) => {
-      const auth_token = store.getters['user/getUserToken']
-      if (auth_token) {
-        config.headers.Authorization = `Bearer ${auth_token}`
+      if (current_auth_token) {
+        config.headers.Authorization = `Bearer ${current_auth_token}`
       }
       return config
     },
     error => Promise.reject(error)
   )
-  api.interceptors.response.use((response) => {
-    if (response.data && response.data.token_expired) {
-      // console.log('response.data.token_expired', response.data)
-      // DEPRECATED By Dan !! It was not working at all ... why did you put it here Shab?
-      // store.dispatch('user/logout', { silent: true })
-      // localStorage.setItem('redirect', this.$route.path)
-      // this.$router.push(localizedRoute('/', currentStoreView().storeCode))
-    }
-    return response
-  }, (error) => {
-    console.log('token Expired error', error)
-    return Promise.reject(error)
-  })
+  // api.interceptors.response.use((response) => {
+  //   if (response.data && response.data.token_expired) {
+  //   }
+  //   return response
+  // }, (error) => {
+  //   console.log('token Expired error', error)
+  //   return Promise.reject(error)
+  // })
 
   // JWT TOKEN MANAGEMENT
   let private_key = ''

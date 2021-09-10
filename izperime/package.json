@@ -10,6 +10,7 @@
     "dev": "nuxt",
     "build": "nuxt build -m",
     "build:analyze": "nuxt build -a -m",
+    "generate": "nuxt generate",
     "start": "nuxt start",
     "test": "jest",
     "test:e2e": "cypress open --config-file tests/e2e/cypress.json",

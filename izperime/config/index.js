@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'production') {
 	}
 } else {
 	config = {
-		API_URL: 'http://localhost:8081/api/'
+		API_URL: 'http://localhost:8091/api/'
 	}
 }
 

@@ -38,7 +38,8 @@
 <script>
 import { SfBottomNavigation, SfIcon, SfCircleIcon } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
-import { useUser } from '@vue-storefront/commercetools';
+
+import { userState } from '~/composables';
 import {mapGetters} from "vuex";
 
 export default {
@@ -49,7 +50,7 @@ export default {
   },
   setup(props, { root }) {
     const { toggleBasketSidebar, toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen, isAccountMenuOpen } = useUiState();
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated } = userState();
 
     const handleAccountClick = async () => {
       if (isAuthenticated.value) {

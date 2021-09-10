@@ -17,12 +17,13 @@
     </template>
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin">
+	      {{ $t('Sign In to place an order') }}
         <ValidationObserver v-slot="{ handleSubmit }" key="log-in">
           <form class="form" @submit.prevent="handleSubmit(handleLogin)">
             <ValidationProvider rules="required|email" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-email'"
-                v-model="form.username"
+                v-model="form.email"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="email"
@@ -42,13 +43,13 @@
                 class="form__element"
               />
             </ValidationProvider>
-            <SfCheckbox
-              v-e2e="'login-modal-remember-me'"
-              v-model="rememberMe"
-              name="remember-me"
-              label="Remember me"
-              class="form__element checkbox"
-            />
+<!--            <SfCheckbox-->
+<!--              v-e2e="'login-modal-remember-me'"-->
+<!--              v-model="rememberMe"-->
+<!--              name="remember-me"-->
+<!--              label="Remember me"-->
+<!--              class="form__element checkbox"-->
+<!--            />-->
             <div v-if="error.login">
               {{ error.login }}
             </div>
@@ -82,7 +83,7 @@
             <ValidationProvider rules="required|email" v-slot="{ errors }">
               <SfInput
                 v-e2e="'forgot-modal-email'"
-                v-model="form.username"
+                v-model="form.email"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="email"
@@ -126,28 +127,28 @@
                 class="form__element"
               />
             </ValidationProvider>
-            <ValidationProvider rules="required" v-slot="{ errors }">
-              <SfInput
-                v-e2e="'login-modal-firstName'"
-                v-model="form.firstName"
-                :valid="!errors[0]"
-                :errorMessage="errors[0]"
-                name="first-name"
-                label="First Name"
-                class="form__element"
-              />
-            </ValidationProvider>
-            <ValidationProvider rules="required" v-slot="{ errors }">
-              <SfInput
-                v-e2e="'login-modal-lastName'"
-                v-model="form.lastName"
-                :valid="!errors[0]"
-                :errorMessage="errors[0]"
-                name="last-name"
-                label="Last Name"
-                class="form__element"
-              />
-            </ValidationProvider>
+<!--            <ValidationProvider rules="required" v-slot="{ errors }">-->
+<!--              <SfInput-->
+<!--                v-e2e="'login-modal-firstName'"-->
+<!--                v-model="form.firstName"-->
+<!--                :valid="!errors[0]"-->
+<!--                :errorMessage="errors[0]"-->
+<!--                name="first-name"-->
+<!--                label="First Name"-->
+<!--                class="form__element"-->
+<!--              />-->
+<!--            </ValidationProvider>-->
+<!--            <ValidationProvider rules="required" v-slot="{ errors }">-->
+<!--              <SfInput-->
+<!--                v-e2e="'login-modal-lastName'"-->
+<!--                v-model="form.lastName"-->
+<!--                :valid="!errors[0]"-->
+<!--                :errorMessage="errors[0]"-->
+<!--                name="last-name"-->
+<!--                label="Last Name"-->
+<!--                class="form__element"-->
+<!--              />-->
+<!--            </ValidationProvider>-->
             <ValidationProvider rules="required" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-password'"
@@ -160,20 +161,20 @@
                 class="form__element"
               />
             </ValidationProvider>
-            <ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">
-              <SfCheckbox
-                v-e2e="'login-modal-create-account'"
-                v-model="createAccount"
-                :valid="!errors[0]"
-                :errorMessage="errors[0]"
-                name="create-account"
-                label="I want to create an account"
-                class="form__element"
-              />
-            </ValidationProvider>
-            <div v-if="error.register">
-              {{ error.register }}
-            </div>
+<!--            <ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">-->
+<!--              <SfCheckbox-->
+<!--                v-e2e="'login-modal-create-account'"-->
+<!--                v-model="createAccount"-->
+<!--                :valid="!errors[0]"-->
+<!--                :errorMessage="errors[0]"-->
+<!--                name="create-account"-->
+<!--                label="I want to create an account"-->
+<!--                class="form__element"-->
+<!--              />-->
+<!--            </ValidationProvider>-->
+<!--            <div v-if="error.register">-->
+<!--              {{ error.register }}-->
+<!--            </div>-->
             <SfButton
               v-e2e="'login-modal-submit'"
               type="submit"
@@ -230,7 +231,7 @@ export default {
   setup() {
     const { isLoginModalOpen, toggleLoginModal } = useUiState();
     const form = ref({});
-    const isLogin = ref(false);
+    const isLogin = ref(true);
     const isForgotten = ref(false);
     const isThankYouAfterForgotten = ref(false);
     const userEmail = ref('');
@@ -278,7 +279,10 @@ export default {
 
     const handleForm = (fn) => async () => {
       resetErrorValues();
-      await fn({ user: form.value });
+      let res = await fn({ ...form.value });
+
+      console.log('handleForm res', res)
+	    if(!res) return
 
       const hasUserErrors = userError.value.register || userError.value.login;
       if (hasUserErrors) {
@@ -286,7 +290,7 @@ export default {
         error.register = userError.value.register?.message;
         return;
       }
-      toggleLoginModal();
+      // toggleLoginModal();
     };
 
     const closeModal = () => {
@@ -299,7 +303,7 @@ export default {
     const handleLogin = async () => handleForm(login)();
 
     const handleForgotten = async () => {
-      userEmail.value = form.value.username;
+      userEmail.value = form.value.email;
       await requestNewPass({ email: userEmail.value });
 
       if (!forgotPasswordError.value.request) {

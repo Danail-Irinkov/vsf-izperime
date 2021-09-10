@@ -34,6 +34,7 @@ import ProfileUpdateForm from '~/components/MyAccount/ProfileUpdateForm';
 import PasswordResetForm from '~/components/MyAccount/PasswordResetForm';
 import { SfTabs, SfInput, SfButton } from '@storefront-ui/vue';
 import { useUser, userGetters } from '@vue-storefront/commercetools';
+import { userState } from '~/composables';
 
 extend('email', {
   ...email,
@@ -72,7 +73,7 @@ export default {
   },
 
   setup() {
-    const { updateUser, changePassword, user } = useUser();
+    const { updateUser, changePassword, user } = userState();
 
     const currentEmail = userGetters.getEmailAddress(user.value);
 

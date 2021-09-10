@@ -81,6 +81,8 @@ import { computed } from '@vue/composition-api';
 import { useCart, useUser, cartGetters } from '@vue-storefront/commercetools';
 import { useUiState } from '~/composables';
 import {mapGetters} from "vuex";
+import { userState } from '~/composables';
+import { useUiNotification } from '~/composables';
 
 export default {
   name: 'Basket',
@@ -97,7 +99,7 @@ export default {
   setup() {
     const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated, addNewOrder } = userState();
     const products = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
@@ -106,6 +108,7 @@ export default {
     return {
       loading,
       isAuthenticated,
+	    addNewOrder,
       products,
       removeItem,
       updateItemQty,
@@ -136,12 +139,86 @@ export default {
 	  }
 	},
 	methods: {
-		placeOrder() {
-			console.log('placeOrder Start')
+		async placeOrder() {
+			try {
+				console.log('placeOrder Start')
+				if(!this.isAuthenticated) {
+					this.toggleLoginModal()
+					return
+				}
 
-			this.toggleLoginModal()
+				let order_data = await this.prepareProCCOrder()
+				console.log('order_data------------ placeProCCOrder', order_data)
 
-		}
+				let result = await this.addNewOrder(order_data)
+
+				if (result.data.message_type === 'success') {
+					await this.ProCCOrderPayment(result.data.order_ids)
+				} else {
+					throw new Error(result.data.message)
+				}
+
+
+			} catch (e) {
+				console.log('placeOrder Err:', e)
+			}
+		},
+		prepareProCCOrder() {
+			let order_data = {
+				cart: this.getCart()
+			}
+			return order_data
+		},
+		async ProCCOrderPayment (order_ids) {
+			// console.log('this.getTotals: ', this.getTotals)
+			let amount
+			for (let segment of this.getTotals) {
+				if (segment.code === 'grand_total') {
+					amount = segment.value
+				}
+			}
+			let data = {
+				total_amount: amount,
+				order_ids,
+				BrowserInfo: this.getBrowserInfo()
+			}
+			this.VSFOrderPayment(data)
+				.then(async (response) => {
+				if (response.data.payIn_result && response.data.payIn_result.RedirectURL) {
+					let newWin = window.open(response.data.payIn_result.RedirectURL, 'popUpWindow', 'height=700,width=800,left=0,top=0,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes')
+					if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+						useUiNotification().send({ type: 'warning', message: this.$t('Please allow the popup window') });
+
+					} else {
+						console.log('newWin.onClose Set for payment popUp')
+						let eventBusEmit = (event) => this.Vue.$emit(event)
+						let timer = setInterval(() => {
+							if (newWin.closed) {
+								clearInterval(timer)
+								eventBusEmit('notification-progress-stop')
+							}
+						}, 500)
+					}
+				} else {
+					useUiNotification().send({ type: 'warning', message: this.$t('Something went Wrong :(') });
+				}
+			}).catch(err => {
+				console.error(err, 'Transaction failed')
+				useUiNotification().send({ type: 'warning', message: this.$t('Something went Wrong :(') });
+			})
+		},
+		getBrowserInfo () {
+			return {
+				JavaEnabled: navigator.javaEnabled(),
+				Language: navigator.language || navigator.userLanguage,
+				ColorDepth: screen.colorDepth,
+				ScreenHeight: screen.height,
+				ScreenWidth: screen.width,
+				TimeZoneOffset: new Date().getTimezoneOffset().toString(),
+				UserAgent: navigator.userAgent,
+				JavascriptEnabled: true
+			}
+		},
 	},
 	computed: {
 		...mapGetters({

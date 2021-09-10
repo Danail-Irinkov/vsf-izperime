@@ -50,7 +50,8 @@
 <script>
 import { SfBreadcrumbs, SfContentPages } from '@storefront-ui/vue';
 import { computed, onBeforeUnmount } from '@vue/composition-api';
-import { useUser } from '@vue-storefront/commercetools';
+
+import { userState } from '~/composables';
 import MyProfile from './MyAccount/MyProfile';
 import ShippingDetails from './MyAccount/ShippingDetails';
 import BillingDetails from './MyAccount/BillingDetails';
@@ -81,7 +82,7 @@ export default {
   ],
   setup(props, context) {
     const { $router, $route } = context.root;
-    const { logout } = useUser();
+    const { logout } = userState();
     const isMobile = computed(() => mapMobileObserver().isMobile.get());
     const activePage = computed(() => {
       const { pageName } = $route.params;

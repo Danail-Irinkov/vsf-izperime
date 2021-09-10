@@ -1,6 +1,7 @@
 import Vue from 'vue'
 export const state = () => ({
 	user: {},
+	user_token: '',
 	city: '',
 	cart: {},
 	timeslots: {
@@ -18,6 +19,12 @@ export const state = () => ({
 })
 
 export const getters = {
+	getUser(state) {
+		return state.user
+	},
+	getUserToken(state) {
+		return state.user_token
+	},
 	getCity(state) {
 		return state.city
 	},

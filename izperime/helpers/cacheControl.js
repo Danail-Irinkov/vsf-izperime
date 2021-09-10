@@ -1,4 +1,5 @@
 const cacheControl = (values) => ({ res }) => {
+	if (!res) return
   if (!process.server) return;
 
   const cacheControlValue = Object.entries(values)
