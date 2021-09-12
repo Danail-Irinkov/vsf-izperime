@@ -50,8 +50,14 @@
 <!--              label="Remember me"-->
 <!--              class="form__element checkbox"-->
 <!--            />-->
-            <div v-if="error.login">
-              {{ error.login }}
+            <div class="error-message" v-if="error.login">
+              {{ $t(error.login) }}
+	            <span v-if="error.login === 'confirmEmail'"
+	                  class="resend-verification-email"
+	                  @click="resendVerificationEmail({email: form.email})"
+	            >
+		            {{$t('resendEmail')}}
+	            </span>
             </div>
             <SfButton v-e2e="'login-modal-submit'"
               type="submit"
@@ -172,9 +178,9 @@
 <!--                class="form__element"-->
 <!--              />-->
 <!--            </ValidationProvider>-->
-<!--            <div v-if="error.register">-->
-<!--              {{ error.register }}-->
-<!--            </div>-->
+            <div class="error-message" v-if="error.register">
+              {{ $t(error.register) }}
+            </div>
             <SfButton
               v-e2e="'login-modal-submit'"
               type="submit"
@@ -237,7 +243,7 @@ export default {
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
-    const { authUser, register, login, loading, userError, requestNewPass, forgotPasswordError, forgotPasswordLoading } = userState();
+    const { authUser, register, login, loading, userError, resendVerificationEmail,  requestNewPass, forgotPasswordError, forgotPasswordLoading } = userState();
 
     const error = reactive({
       login: null,
@@ -284,13 +290,15 @@ export default {
       console.log('handleForm res', res)
 	    if(!res) return
 
+	    console.log('handleForm userError', userError)
       const hasUserErrors = userError.value.register || userError.value.login;
+	    console.log('handleForm hasUserErrors', hasUserErrors)
       if (hasUserErrors) {
-        error.login = userError.value.login?.message;
-        error.register = userError.value.register?.message;
+        error.login = userError.value.login;
+        error.register = userError.value.register;
         return;
       }
-      // toggleLoginModal();
+      toggleLoginModal();
     };
 
     const closeModal = () => {
@@ -327,6 +335,7 @@ export default {
       setIsLoginValue,
       isForgotten,
       setIsForgottenValue,
+	    resendVerificationEmail,
       forgotPasswordError,
       forgotPasswordLoading,
       handleForgotten,
@@ -389,4 +398,13 @@ export default {
     }
   }
 }
+	.resend-verification-email {
+		cursor: pointer;
+		text-decoration: underline;
+		color: #7F828B;
+	}
+	.error-message {
+		margin-bottom: 2rem;
+		margin-top: -2rem;
+	}
 </style>

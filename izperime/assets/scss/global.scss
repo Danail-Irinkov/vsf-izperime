@@ -9,7 +9,12 @@
 .layout-leave-active {
 	opacity: 0;
 }
-
+.disabled {
+	opacity: 0.5
+}
+.pointer {
+	cursor: pointer;
+}
 p, h4 {
 	max-width: 28em;
 }

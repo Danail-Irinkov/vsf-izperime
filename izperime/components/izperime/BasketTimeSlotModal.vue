@@ -19,9 +19,13 @@
     <div name="sf-fade" mode="out-in">
       <div class="service-dialog-wrapper">
 	      <div class="day-selector">
-		      <div class="day-item"
+		      <div class="day-item pointer"
 		           v-for="day in availableDays"
-		           :class="{'day-selected': timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay === day.date}"
+		           :class="{
+		           	'day-selected': timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay === day.date,
+		           	'disabled': isDayDisabled(day)
+		           }"
+		           :disabled="isDayDisabled(day)"
 		           @click="selectDay(day)"
 		      >
 			      <span>{{ day.letter }}</span>
@@ -32,7 +36,7 @@
 	      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
 
 	      <div class="timeslot-selector" style="margin-top: 2rem" v-if="timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay">
-		      <div class="available-timeslots"
+		      <div class="available-timeslots pointer"
 		           :class="{ 'timeslot-selected': timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedTimeslot && timeslots[currentTimeSlot].selectedTimeslot.from === timeslot.from  && timeslots[currentTimeSlot].selectedTimeslot.to === timeslot.to }"
 		           v-for="timeslot in availableTimeSlots"
 		           @click="selectTimeslot(timeslot)"
@@ -155,7 +159,11 @@ export default {
 		...mapMutations({
 			setTimeSlots: 'setTimeSlots',
 		}),
+		isDayDisabled(day) {
+			return this.$moment(day.full_date).format('d') === '0' // Checking if it is Sunday
+		},
 		selectDay(day) {
+			if(this.isDayDisabled(day))return
 			this.timeslots[this.currentTimeSlot].selectedDay = day.date
 			this.timeslots[this.currentTimeSlot].selectedDate = day.full_date
 		},

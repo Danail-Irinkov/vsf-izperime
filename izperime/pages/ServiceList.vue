@@ -23,6 +23,7 @@ import ServiceNavigation from '~/components/izperime/ServiceNavigation.vue';
 import LazyHydrate from 'vue-lazy-hydration';
 import cacheControl from './../helpers/cacheControl';
 import { useUiState } from '~/composables';
+import {mapGetters} from "vuex";
 
 export default {
   name: 'ServiceList',
@@ -44,7 +45,12 @@ export default {
 	  ServiceNavigation,
     LazyHydrate
   },
-  data() {
+	created() {
+  	if (!this.getCity){
+		  this.$router.push('/');
+	  }
+	},
+	data() {
     return {
       services: [
         {
@@ -204,6 +210,9 @@ export default {
   methods: {
   },
 	computed: {
+		...mapGetters({
+			getCity: 'getCity',
+		}),
   	filtered_services() {
   		let services = [...this.services]
 		  let current_category = this.activeServiceCategory

@@ -1,14 +1,15 @@
 <template>
   <div id="layout">
-      <AppHeader />
-      <nuxt />
-      <BottomNavigation />
-      <BasketSidebar />
-	    <ServiceModal/>
-	    <OrdersModal/>
-	    <BasketTimeSlotModal/>
-	    <AccountModal/>
-	    <LoginModal />
+	  <Notification />
+    <AppHeader />
+    <nuxt />
+    <BottomNavigation />
+    <BasketSidebar />
+    <ServiceModal/>
+    <OrdersModal/>
+    <BasketTimeSlotModal/>
+    <AccountModal/>
+    <LoginModal />
   </div>
 </template>
 
@@ -22,10 +23,10 @@ import ServiceModal from '~/components/izperime/ServiceModal';
 import OrdersModal from '~/components/izperime/OrdersModal';
 import BasketTimeSlotModal from '~/components/izperime/BasketTimeSlotModal';
 import AccountModal from '~/components/izperime/AccountModal';
+import Notification from '~/components/Notification';
 
 export default {
   name: 'AppLayout',
-
   components: {
     TopBar,
     AppHeader,
@@ -35,6 +36,7 @@ export default {
 	  OrdersModal,
 	  BasketTimeSlotModal,
 	  AccountModal,
+	  Notification,
     LoginModal
   }
 };

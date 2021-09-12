@@ -36,6 +36,7 @@ const useUiNotification = () => {
       dismiss
     };
 
+    console.log('adding new Notification', newNotification)
     state.notifications.push(newNotification);
     if (state.notifications.length > maxVisibleNotifications) state.notifications.shift();
 

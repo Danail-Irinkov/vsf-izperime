@@ -6,17 +6,17 @@ Vue.use(VueCompositionAPI);
 let apiClient = procc_api()
 
 const state = reactive({
-	user: {},
+	user: {_id: ''},
 	authToken: '',
 	loading: false,
-	userError: '',
-	forgotPasswordError: '',
+	userError: {login: '', register: ''},
+	forgotPasswordError: {request: ''},
 	forgotPasswordLoading: false,
 });
 
 const userState = () => {
 	const setAuthToken = (token) => {
-		console.log('setAuthToken data', token)
+		// console.log('setAuthToken data', token)
 		state.authToken = token
 		apiClient = procc_api(token)
 	};
@@ -31,6 +31,7 @@ const userState = () => {
 			state.loading = true
 			console.log('register data', data)
 			let result = await apiClient.createVSFCustomer(data)
+			console.log('register data', result.data)
 
 			if (result.data && result.data.token)
 				setAuthToken(result.data.token)
@@ -42,7 +43,7 @@ const userState = () => {
 			return result
 		} catch (e) {
 			console.log('register err', e)
-			state.userError = e.data.message
+			state.userError.register = e.data.message
 			state.loading = false
 			// return Promise.reject(e)
 		}
@@ -54,6 +55,53 @@ const userState = () => {
 			console.log('login data', data)
 
 			let result = await apiClient.VSFCustomerLogin(data)
+			console.log('login data2', result.data)
+
+			if (result.data && result.data.message_type && result.data.message_type !== 'success') {
+				state.userError.login = result.data.message
+			}
+
+			if (result.data && result.data.token)
+				setAuthToken(result.data.token)
+
+			if (result.data && result.data.user)
+				state.user = {...result.data.user}
+
+
+			state.loading = false
+			return result
+		} catch (e) {
+			state.loading = false
+			console.log('login err1', e)
+			state.userError.login = e.data.message
+			console.log('login err2', state.userError)
+			return e
+			// return Promise.resolve(e)
+		}
+	};
+
+	const resendVerificationEmail = async (data) => {
+		try {
+			state.loading = true
+			console.log('resendVerificationEmail data', data)
+
+			let result = await apiClient.resendVerificationEmail(data)
+
+			state.loading = false
+			return result
+		} catch (e) {
+			state.loading = false
+			console.log('resendVerificationEmail err', e)
+			state.userError.login = e.data.message
+			// return Promise.reject(e)
+		}
+	};
+	const verifyCustomerEmail = async (data) => {
+		try {
+			state.loading = true
+			console.log('verifyCustomerEmail data', data)
+
+			let result = await apiClient.verifyCustomerEmail(data)
 
 			if (result.data && result.data.token)
 				setAuthToken(result.data.token)
@@ -65,12 +113,33 @@ const userState = () => {
 			return result
 		} catch (e) {
 			state.loading = false
-			console.log('register err', e)
-			state.userError = e.data.message
+			console.log('verifyCustomerEmail err', e)
+			state.userError.login = e.data.message
 			// return Promise.reject(e)
 		}
 	};
+	const updateTransactionStatus = async (data) => {
+		try {
+			state.loading = true
+			console.log('updateTransactionStatus data', data)
 
+			let result = await apiClient.updateTransactionStatus(data, state.user._id)
+
+			if (result.data && result.data.token)
+				setAuthToken(result.data.token)
+
+			if (result.data && result.data.user)
+				state.user = {...result.data.user}
+
+			state.loading = false
+			return result
+		} catch (e) {
+			state.loading = false
+			console.log('updateTransactionStatus err', e)
+			state.userError.login = e.data.message
+			// return Promise.reject(e)
+		}
+	};
 	const updateUser = async (data) => {
 		try {
 			state.loading = true
@@ -89,7 +158,7 @@ const userState = () => {
 		} catch (e) {
 			state.loading = false
 			console.log('register err', e)
-			state.userError = e.data.message
+			state.userError.login = e.data.message
 			// return Promise.reject(e)
 		}
 	};
@@ -111,7 +180,7 @@ const userState = () => {
 		} catch (e) {
 			state.loading = false
 			console.log('register err', e)
-			state.userError = e.data.message
+			state.userError.login = e.data.message
 			// return Promise.reject(e)
 		}
 	};
@@ -129,7 +198,7 @@ const userState = () => {
 		} catch (e) {
 			state.loading = false
 			console.log('register err', e)
-			state.userError = e.data.message
+			state.userError.login = e.data.message
 			// return Promise.reject(e)
 		}
 	};
@@ -151,7 +220,7 @@ const userState = () => {
 			return result
 		} catch (e) {
 			console.log('register err', e)
-			state.forgotPasswordError = e.data.message
+			state.forgotPasswordError.request = e.data.message
 			state.forgotPasswordLoading = false
 			// return Promise.reject(e)
 		}
@@ -175,14 +244,14 @@ const userState = () => {
 	const VSFOrderPayment = async (data) => {
 		try {
 			state.forgotPasswordLoading = true
-			console.log('addNewOrder data', data)
+			console.log('VSFOrderPayment data', data)
 
-			let result = await apiClient.VSFOrderPayment(data)
+			let result = await apiClient.VSFOrderPayment(data, state.user._id)
 
 			state.forgotPasswordLoading = false
 			return result
 		} catch (e) {
-			console.log('register err', e)
+			console.log('VSFOrderPayment err', e)
 			state.userError = e.data.message
 			state.loading = false
 			// return Promise.reject(e)
@@ -199,6 +268,8 @@ const userState = () => {
 	  forgotPasswordLoading,
 	  updateUser,
 	  changePassword,
+	  resendVerificationEmail,
+	  verifyCustomerEmail,
 	  register,
 	  login,
 	  logout,

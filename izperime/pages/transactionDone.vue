@@ -1,33 +1,8 @@
 <template>
-  <div id="home" class="home-screen">
-	  <div class="w-100 h-100 vertical-align-container" v-if="!appReady">
-		  <transition name="sf-fade" mode="out-in">
-			  <img src="/icons/logolaundr.png"
-			       v-if="showLogo"
-			           alt="Logo"
-			           class="logo"/>
-		  </transition>
-	  </div>
-	  <div class="w-100 h-100 vertical-align-container" v-else>
-		  <transition name="sf-fade" mode="out-in">
-			  <div class="vertical-align-child" v-if="appReady"
-			       style="transition-duration: 300ms">
-				  <v-select
-					  class="initial-city-select"
-					  v-model="city"
-					  id="city"
-					  name="city"
-					  :placeholder="$t('City')"
-					  :options="cities"
-					  :searchable="false"
-					  :clearable="false"
-					  @input="citySelected"
-				  >
-				  </v-select>
-			  </div>
-		  </transition>
-	  </div>
-  </div>
+	<div style="padding: 3rem;text-align: center; font-family: Helvetica;font-size: larger;opacity: 0.7;color: rgba(0,0,0,0.68);">
+		<p>{{ $t('The transaction is being processed') }}</p>
+		<p>{{ $t('Please Wait...') }}</p>
+	</div>
 </template>
 <script>
 import cacheControl from './../helpers/cacheControl';
@@ -38,8 +13,8 @@ import {mapGetters, mapMutations} from "vuex";
 import { userState } from '~/composables';
 import { useUiNotification } from '~/composables';
 export default {
-  name: 'Home',
-  layout: 'blank',
+  name: 'TransactionDone',
+  layout: 'app',
   middleware: cacheControl({
     'max-age': 60,
     'stale-when-revalidate': 5
@@ -49,34 +24,20 @@ export default {
 	  vSelect
   },
 	async created() {
-  	if(this.$route.query.verification_code) {
-  		try {
-  		let userState2 = userState()
-		  let res = await userState2.verifyCustomerEmail({email_verification_code: this.$route.query.verification_code})
-		  console.log('verifyCustomerEmail res', res)
-
-		  useUiNotification().send({ type: 'success', message: this.$t('Email Verified') });
-		  } catch (e) {
-			  useUiNotification().send({ type: 'warning', message: this.$t('Email Verification Failed') });
-		  }
-	  }
 	},
 	data() {
     return {
-	    appReady: false,
-	    showLogo: false,
-	    country: 'Bulgaria',
-	    city: '',
-	    cities: ['Sofia', 'Varna']
+	    payment: this.$store.state.checkout.paymentDetails,
+	    mangopay_transaction_id: ''
     }
   },
 	async mounted() {
-		this.city = String(this.getCity)
-  	await this.sleep(500)
-		this.showLogo = true
-  	await this.sleep(2000)
-		this.appReady = true
-		if (this.city) this.citySelected()
+		if (this.$route.query.transactionId) {
+			console.log('before window.opener.callPlaceOrder')
+			window.opener.callPlaceOrder(this.$route.query.transactionId)
+
+			setTimeout(() => { window.close() }, 3000)
+		}
 	},
 	methods: {
 		...mapMutations({
@@ -89,9 +50,6 @@ export default {
 		}
   },
 	computed: {
-		...mapGetters({
-			getCity: 'getCity',
-		}),
 	}
 };
 </script>

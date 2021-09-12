@@ -18,6 +18,7 @@
             required
             :valid="!!form.firstName && !errors[0]"
             :errorMessage="errors[0]"
+            @blur="updateParentData"
           />
         </ValidationProvider>
         <ValidationProvider
@@ -32,6 +33,7 @@
             required
             :valid="!!form.lastName && !errors[0]"
             :errorMessage="errors[0]"
+            @blur="updateParentData"
           />
         </ValidationProvider>
       </div>
@@ -47,6 +49,7 @@
           required
           :valid="!!form.streetName && !errors[0]"
           :errorMessage="errors[0]"
+          @blur="updateParentData"
         />
       </ValidationProvider>
       <ValidationProvider
@@ -61,6 +64,7 @@
           required
           :valid="!!form.apartment && !errors[0]"
           :errorMessage="errors[0]"
+          @blur="updateParentData"
         />
       </ValidationProvider>
 
@@ -76,6 +80,7 @@
           required
           :valid="!!form.phone && !errors[0]"
           :errorMessage="errors[0]"
+          @blur="updateParentData"
         />
       </ValidationProvider>
 
@@ -86,6 +91,7 @@
 		    :valid="!!form.deliveryNotes"
 		    name="streetName"
 		    :label="$t('Delivery Notes')"
+		    @blur="updateParentData"
 	    />
     </form>
   </ValidationObserver>
@@ -104,6 +110,7 @@ import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { reactive, computed, watch } from '@vue/composition-api';
 import { useVSFContext } from '@vue-storefront/core';
 import '@/helpers/validators/phone';
+import {mapGetters} from "vuex";
 
 extend('required', {
   ...required,
@@ -152,18 +159,27 @@ export default {
       required: false
     }
   },
-
+	computed: {
+		...mapGetters({
+			getCity: 'getCity',
+		}),
+	},
+	mounted(){
+		if (!this.form.city) this.form.city = String(this.getCity)
+		if (!this.form.country) this.form.country = 'Bulgaria'
+	},
   setup(props, { emit }) {
     const { $ct: { config } } = useVSFContext();
     const form = reactive({
-      id: props.address.id,
-      firstName: props.address.firstName,
-      lastName: props.address.lastName,
-      streetName: props.address.streetName,
-      apartment: props.address.apartment,
-      city: props.address.city,
-      phone: props.address.phone,
-	    deliveryNotes: ''
+      _id: props.address._id || '',
+      firstName: props.address.firstName || '',
+      lastName: props.address.lastName || '',
+      streetName: props.address.streetName || '',
+      apartment: props.address.apartment || '',
+      city: props.address.city || '',
+      country: props.address.country || '',
+      phone: props.address.phone || '',
+	    deliveryNotes: props.address.deliveryNotes || '',
     });
 
     const submitForm = () => {
@@ -202,7 +218,19 @@ export default {
       countries: config.countries,
       statesInSelectedCountry
     };
-  }
+  },
+	methods: {
+		updateParentData() {
+			this.address._id = this.form._id
+			this.address.firstName = this.form.firstName
+			this.address.lastName = this.form.lastName
+			this.address.streetName = this.form.streetName
+			this.address.apartment = this.form.apartment
+			this.address.city = this.form.city
+			this.address.phone = this.form.phone
+			this.address.deliveryNotes = this.form.deliveryNotes
+		}
+	}
 };
 </script>
 

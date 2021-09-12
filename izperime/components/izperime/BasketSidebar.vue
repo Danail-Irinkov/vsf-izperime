@@ -11,13 +11,13 @@
       <template #content-top>
 	      <transition name="sf-fade" mode="out-in">
 		      <div>
-			      <ShippingAddressBasket
+			      <BasketShippingAddress
+				      ref="basket_address"
 				      :address="activeAddress"/>
 
 			      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
 
-			      <BasketDeliverySlots style="margin: 2rem 0"
-				      :deliverySlots="deliverySlots"/>
+			      <BasketDeliverySlots style="margin: 2rem 0"/>
 
 <!--			      <hr size="1px" style="width: 100vw;position: absolute; left: 0; margin-top: -14px;color: #4B5563"/>-->
 
@@ -49,6 +49,8 @@
             <SfButton
               v-e2e="'go-to-checkout-btn'"
               class="sf-button--full-width place-order-button color-izperime"
+              :class="{disabled: !isOrderFormValid}"
+              :disabled="!isOrderFormValid"
               @click="placeOrder"
             >
               {{ $t('Place Order') }}
@@ -73,7 +75,7 @@ import {
   SfProperty,
   SfPrice,
 } from '@storefront-ui/vue';
-import ShippingAddressBasket from '~/components/izperime/ShippingAddressBasket';
+import BasketShippingAddress from '~/components/izperime/BasketShippingAddress';
 import BasketDeliverySlots from '~/components/izperime/BasketDeliverySlots';
 import AddressInput from '~/components/izperime/AddressInput.vue';
 import BasketItems from '~/components/izperime/BasketItems';
@@ -87,7 +89,7 @@ import { useUiNotification } from '~/composables';
 export default {
   name: 'Basket',
   components: {
-	  ShippingAddressBasket,
+	  BasketShippingAddress,
 	  BasketDeliverySlots,
 	  BasketItems,
 	  AddressInput,
@@ -99,7 +101,7 @@ export default {
   setup() {
     const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
-    const { isAuthenticated, addNewOrder } = userState();
+    const { isAuthenticated, user, addNewOrder, VSFOrderPayment , updateTransactionStatus } = userState();
     const products = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
@@ -108,7 +110,10 @@ export default {
     return {
       loading,
       isAuthenticated,
+	    updateTransactionStatus,
+	    user,
 	    addNewOrder,
+	    VSFOrderPayment,
       products,
       removeItem,
       updateItemQty,
@@ -131,17 +136,31 @@ export default {
 			  phone: '',
 			  deliveryNotes: '',
 		  },
-		  deliverySlots: {
-			  collection: {},
-			  delivery: {}
-		  },
 		  cleaningInstructions: ''
 	  }
+	},
+	mounted () {
+		window.callPlaceOrder = (transactionId) => { // ProCC MangoPay Handler
+			console.log('window.callPlaceOrder Payment')
+			this.transactionId = transactionId
+			this.updateTransactionStatus({mangopay_transaction_id: transactionId})
+				.then((result) => {
+				console.log('Payment callPlaceOrder', result.data)
+				this.transactionId = result.data.transaction._id
+				if (result.data.message_type === 'success') {
+					// TODO: handle success
+				} else {
+					// TODO : Handle errors
+				}
+			}).catch(err => {
+				console.log(err, 'Transaction Failed!!')
+			})
+		}
 	},
 	methods: {
 		async placeOrder() {
 			try {
-				console.log('placeOrder Start')
+				console.log('placeOrder Start', this.isAuthenticated, this.user)
 				if(!this.isAuthenticated) {
 					this.toggleLoginModal()
 					return
@@ -151,9 +170,10 @@ export default {
 				console.log('order_data------------ placeProCCOrder', order_data)
 
 				let result = await this.addNewOrder(order_data)
+				console.log('order_data------------ result', result.data)
 
 				if (result.data.message_type === 'success') {
-					await this.ProCCOrderPayment(result.data.order_ids)
+					await this.ProCCOrderPayment(result.data.order_id)
 				} else {
 					throw new Error(result.data.message)
 				}
@@ -165,30 +185,29 @@ export default {
 		},
 		prepareProCCOrder() {
 			let order_data = {
-				cart: this.getCart()
+				address: this.activeAddress,
+				cleaningInstructions: this.cleaningInstructions,
+				timeslots: this.getTimeSlots,
+				cart: this.getCart
 			}
 			return order_data
 		},
-		async ProCCOrderPayment (order_ids) {
+		async ProCCOrderPayment (order_id) {
 			// console.log('this.getTotals: ', this.getTotals)
-			let amount
-			for (let segment of this.getTotals) {
-				if (segment.code === 'grand_total') {
-					amount = segment.value
+			try {
+				let data = {
+					total_amount: this.cartAmount,
+					order_id,
+					BrowserInfo: this.getBrowserInfo()
 				}
-			}
-			let data = {
-				total_amount: amount,
-				order_ids,
-				BrowserInfo: this.getBrowserInfo()
-			}
-			this.VSFOrderPayment(data)
-				.then(async (response) => {
+				console.log('ProCCOrderPayment data', data)
+				let response = await this.VSFOrderPayment(data)
+				console.log('ProCCOrderPayment response', response.data)
 				if (response.data.payIn_result && response.data.payIn_result.RedirectURL) {
+					console.log('ProCCOrderPayment response', response.data.payIn_result)
 					let newWin = window.open(response.data.payIn_result.RedirectURL, 'popUpWindow', 'height=700,width=800,left=0,top=0,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes')
 					if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
 						useUiNotification().send({ type: 'warning', message: this.$t('Please allow the popup window') });
-
 					} else {
 						console.log('newWin.onClose Set for payment popUp')
 						let eventBusEmit = (event) => this.Vue.$emit(event)
@@ -202,10 +221,10 @@ export default {
 				} else {
 					useUiNotification().send({ type: 'warning', message: this.$t('Something went Wrong :(') });
 				}
-			}).catch(err => {
-				console.error(err, 'Transaction failed')
+			} catch (e) {
+				console.error(e, 'Transaction failed')
 				useUiNotification().send({ type: 'warning', message: this.$t('Something went Wrong :(') });
-			})
+			}
 		},
 		getBrowserInfo () {
 			return {
@@ -225,7 +244,25 @@ export default {
 			getCart: 'getCart',
 			cartCount: 'cartCount',
 			cartAmount: 'cartAmount',
+			getTimeSlots: 'getTimeSlots',
 		}),
+		isOrderFormValid() {
+			let is_valid = true
+			if (!this.activeAddress.firstName || !this.activeAddress.lastName
+				|| !this.activeAddress.streetName || !this.activeAddress.apartment || !this.activeAddress.phone ) {
+				is_valid = false
+			}
+			let deliverySlots = this.getTimeSlots
+			if (!(deliverySlots.collection && deliverySlots.collection.selectedDate && deliverySlots.collection.selectedTimeslot
+				&& deliverySlots.delivery && deliverySlots.delivery.selectedDate && deliverySlots.delivery.selectedTimeslot)) {
+				is_valid = false
+			}
+			if (this.cartCount < 1) {
+				is_valid = false
+			}
+
+			return is_valid
+		}
 	},
 };
 </script>

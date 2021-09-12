@@ -62,8 +62,10 @@ export default {
 		}),
 		setInitialTimeslotDates() {
 			let timeslots = _cloneDeep(this.getTimeSlots)
+			let i = 1
+			if (this.$moment().add(i, 'd').format('d') === '0') i++ //Checking if it is Sunday
+
 			if (timeslots.collection.selectedDate === 0) {
-				let i = 1
 				timeslots.collection.selectedDate = this.$moment().add(i, 'd').format()
 				timeslots.collection.selectedDay = this.$moment().add(i, 'd').format('D')
 				timeslots.collection.selectedTimeslot = {
@@ -74,7 +76,7 @@ export default {
 
 			}
 			if (timeslots.delivery.selectedDate === 0) {
-				let i = 3
+				i = i + 2
 				timeslots.delivery.selectedDate = this.$moment().add(i, 'd').format()
 				timeslots.delivery.selectedDay = this.$moment().add(i, 'd').format('D')
 				timeslots.delivery.selectedTimeslot = {

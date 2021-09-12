@@ -1,14 +1,19 @@
 <template>
   <div>
     <div id="layout">
+	    <Notification />
       <nuxt :key="$route.fullPath"/>
     </div>
   </div>
 </template>
 
 <script>
+	import Notification from '~/components/Notification';
 export default {
-  name: 'BlankLayout'
+  name: 'BlankLayout',
+	components: {
+		Notification,
+	}
 };
 </script>
 
