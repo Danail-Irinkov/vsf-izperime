@@ -33,10 +33,11 @@ export default {
     'stale-when-revalidate': 5
   }),
 	setup(props, { root }) {
-		const { activeServiceCategory, setServiceModal } = useUiState();
+		const { activeServiceCategory, setServiceModal, toggleAddCardModal } = useUiState();
 		return {
 			activeServiceCategory,
 			setServiceModal,
+			toggleAddCardModal,
 		};
 	},
   components: {
@@ -47,8 +48,14 @@ export default {
   },
 	created() {
   	if (!this.getCity){
-		  this.$router.push('/');
+
+		  // this.toggleAddCardModal()
+		  // this.$router.push('/');
 	  }
+	},
+	async mounted(){
+		// await this.sleep(3000)
+		// this.toggleAddCardModal()
 	},
 	data() {
     return {

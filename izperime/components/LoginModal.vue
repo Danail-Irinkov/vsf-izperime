@@ -235,7 +235,7 @@ export default {
     SfBar
   },
   setup() {
-    const { isLoginModalOpen, toggleLoginModal } = useUiState();
+    const { isLoginModalOpen, toggleLoginModal, LoginModalAction } = useUiState();
     const form = ref({});
     const isLogin = ref(true);
     const isForgotten = ref(false);
@@ -243,7 +243,7 @@ export default {
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
-    const { authUser, register, login, loading, userError, resendVerificationEmail,  requestNewPass, forgotPasswordError, forgotPasswordLoading } = userState();
+    const { user, register, login, loading, userError, resendVerificationEmail,  requestNewPass, forgotPasswordError, forgotPasswordLoading } = userState();
 
     const error = reactive({
       login: null,
@@ -265,6 +265,14 @@ export default {
       }
     });
 
+    watch(LoginModalAction, () => {
+      if (LoginModalAction.value === 'login') {
+	      setIsLoginValue(true)
+      }
+      if (LoginModalAction.value   === 'register') {
+	      setIsLoginValue(false)
+      }
+    });
     watch(isLoginModalOpen, () => {
       if (isLoginModalOpen) {
         form.value = {};
@@ -342,7 +350,7 @@ export default {
       closeModal,
       isThankYouAfterForgotten,
       userEmail,
-	    authUser,
+	    user,
       barTitle
     };
   }

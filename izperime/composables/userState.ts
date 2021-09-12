@@ -190,7 +190,7 @@ const userState = () => {
 			state.loading = true
 			console.log('login data', data)
 
-			state.user = {}
+			state.user = {_id: ''}
 			state.authToken = ''
 
 			state.loading = false
@@ -257,6 +257,22 @@ const userState = () => {
 			// return Promise.reject(e)
 		}
 	};
+	const saveCardVSF = async (data) => {
+		try {
+			state.forgotPasswordLoading = true
+			console.log('saveCardVSF data', data)
+
+			let result = await apiClient.saveCardVSF(data, state.user._id)
+
+			state.forgotPasswordLoading = false
+			return result
+		} catch (e) {
+			console.log('saveCardVSF err', e)
+			state.userError = e.data.message
+			state.loading = false
+			// return Promise.reject(e)
+		}
+	};
 
 
   return {
@@ -275,6 +291,7 @@ const userState = () => {
 	  logout,
 	  addNewOrder,
 	  VSFOrderPayment,
+	  saveCardVSF,
 	  requestNewPass
   };
 };

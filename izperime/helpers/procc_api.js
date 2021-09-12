@@ -126,6 +126,7 @@ export default (token = '') => {
   const addNewOrder = (orderData, user_id) => api.post('order/addNewOrder', orderData, getHeader(user_id))
   const saveTransactionInOrder = (orderData, user_id) => api.post('order/saveTransactionInOrder', orderData, getHeader(user_id))
   const VSFOrderPayment = (data, user_id) => api.post('mangopay/VSFOrderPayment', data, getHeader(user_id))
+  const saveCardVSF = (data, user_id) => api.post('mangopay/saveCardVSF', data, getHeader(user_id))
   const updateTransactionStatus = (data, user_id) => api.post('mangopay/updateTransactionStatusVSF', data, getHeader(user_id))
 
   // Customer
@@ -170,6 +171,7 @@ export default (token = '') => {
     getCountriesList,
     getCitiesList,
     getStreetList,
+	  saveCardVSF,
     saveFeedback
   }
 }

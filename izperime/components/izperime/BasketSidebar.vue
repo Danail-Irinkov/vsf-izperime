@@ -99,7 +99,7 @@ export default {
     SfPrice,
   },
   setup() {
-    const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal } = useUiState();
+    const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal , toggleAddCardModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
     const { isAuthenticated, user, addNewOrder, VSFOrderPayment , updateTransactionStatus } = userState();
     const products = computed(() => cartGetters.getItems(cart.value));
@@ -120,6 +120,7 @@ export default {
       isBasketSidebarOpen,
 	    toggleBasketSidebar,
 	    toggleLoginModal,
+	    toggleAddCardModal,
       totals,
       totalItems,
       cartGetters
@@ -173,6 +174,7 @@ export default {
 				console.log('order_data------------ result', result.data)
 
 				if (result.data.message_type === 'success') {
+					this.toggleAddCardModal()
 					await this.ProCCOrderPayment(result.data.order_id)
 				} else {
 					throw new Error(result.data.message)

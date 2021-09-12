@@ -18,25 +18,47 @@
 <!--    <transition name="sf-fade"-->
     <div name="sf-fade" mode="out-in">
       <p class="section-title">{{ $t('Your details')}}</p>
-	    <div>
-		    <SfIcon
-			    icon="account"
-			    :color="'hotpink'"
-			    class="menu-icon"
-		    />
-		    <h4 class="active-hotpink menu-text"
-		    >{{ $t('Create a new account') }}</h4>
+	    <div v-if="!user._id">
+		    <div @click="openLoginModal('register')">
+			    <SfIcon
+				    icon="account"
+				    :color="'hotpink'"
+				    class="menu-icon"
+			    />
+			    <h4 class="active-hotpink menu-text"
+			    >{{ $t('Create a new account') }}</h4>
+		    </div>
+		    <div @click="openLoginModal('login')">
+			    <SfIcon
+				    icon="login"
+				    :color="'hotpink'"
+				    class="menu-icon"
+			    />
+			    <h4 class="active-hotpink menu-text"
+			    >{{ $t('Login') }}</h4>
+		    </div>
 	    </div>
-	    <div>
-		    <SfIcon
-			    icon="login"
-			    :color="'hotpink'"
-			    class="menu-icon"
-		    />
-		    <h4 class="active-hotpink menu-text"
-		    >{{ $t('Login') }}</h4>
+	    <div v-else>
+		    <div @click="toggleOrdersModal()">
+			    <SfIcon
+				    icon="login"
+				    :color="'hotpink'"
+				    class="menu-icon"
+			    />
+			    <h4 class="active-hotpink menu-text"
+			    >{{ $t('Orders') }}</h4>
+		    </div>
 	    </div>
-
+		    <div @click="toggleAddCardModal()">
+			    <SfIcon
+				    icon="login"
+				    :color="'hotpink'"
+				    class="menu-icon"
+			    />
+			    <h4 class="active-hotpink menu-text"
+			    >{{ $t('Add a Card') }}</h4>
+		    </div>
+	    </div>
 	    <hr size="1px" style="width: 100vw;position: absolute; left: 0;color: #2b313b"/>
 
 	    <p class="section-title" style="margin-top: 25px">{{ $t('Our details')}}</p>
@@ -83,6 +105,7 @@ import {
 import { ref, watch, computed } from '@vue/composition-api';
 import { productGetters } from '@vue-storefront/commercetools';
 import { useUiState } from '~/composables';
+import { userState } from '~/composables';
 import { Collapse, CollapseItem } from 'element-ui'
 
 export default {
@@ -104,16 +127,26 @@ export default {
 	  }
 	},
   setup(props, { emit }) {
-	  const { isAccountModalOpen, toggleAccountModal } = useUiState();
+	  const { isAccountModalOpen, toggleAccountModal, toggleLoginModal, toggleAddCardModal } = useUiState();
+	  const { user } = userState();
 
     return {
 	    toggleAccountModal,
 	    isAccountModalOpen,
+	    toggleLoginModal,
+	    toggleAddCardModal,
+	    user,
     };
   },
 	methods: {
 		closeServiceModal() {
 			this.toggleAccountModal()
+		},
+		openLoginModal(action) {
+			this.toggleLoginModal(action)
+		},
+		toggleOrdersModal() {
+			this.toggleLoginModal()
 		},
 	},
 	watch: {

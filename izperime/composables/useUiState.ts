@@ -14,11 +14,13 @@ const state = reactive({
 	isOrdersModalOpen: false,
 	isBasketSidebarOpen: false,
 	isBasketTimeSlotModalOpen: false,
+	isAddCardModalOpen: false,
 	currentTimeSlot: 'collection',
 	// Original States
   isCartSidebarOpen: false,
   isWishlistSidebarOpen: false,
   isLoginModalOpen: false,
+	LoginModalAction: 'login',
   isCategoryGridView: true,
   isFilterSidebarOpen: false,
   isMobileMenuOpen: false
@@ -64,6 +66,11 @@ const useUiState = () => {
 		state.isAccountModalOpen = !state.isAccountModalOpen;
 	};
 
+	const isAddCardModalOpen = computed(() => state.isAddCardModalOpen);
+	const toggleAddCardModal = () => {
+		state.isAddCardModalOpen = !state.isAddCardModalOpen;
+	};
+
 	// ORIGINAL VSF STATES
 	const isMobileMenuOpen = computed(() => state.isMobileMenuOpen);
 	const toggleMobileMenu = () => {
@@ -97,7 +104,10 @@ const useUiState = () => {
   };
 
   const isLoginModalOpen = computed(() => state.isLoginModalOpen);
-  const toggleLoginModal = () => {
+  const LoginModalAction = computed(() => state.LoginModalAction);
+  const toggleLoginModal = (action) => {
+  	console.log('toggleLoginModal action', action)
+  	state.LoginModalAction = action
     if (state.isMobileMenuOpen) toggleMobileMenu();
     state.isLoginModalOpen = !state.isLoginModalOpen;
   };
@@ -135,11 +145,14 @@ const useUiState = () => {
 	  toggleBasketSidebar,
 	  isBasketTimeSlotModalOpen,
 	  toggleBasketTimeSlotModal,
+	  isAddCardModalOpen,
+	  toggleAddCardModal,
 	  currentTimeSlot,
 	  // Original VSF states
     isCartSidebarOpen,
     isWishlistSidebarOpen,
     isLoginModalOpen,
+	  LoginModalAction,
     isCategoryGridView,
     isFilterSidebarOpen,
     isMobileMenuOpen,

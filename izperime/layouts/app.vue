@@ -8,6 +8,7 @@
     <ServiceModal/>
     <OrdersModal/>
     <BasketTimeSlotModal/>
+    <AddCardModal/>
     <AccountModal/>
     <LoginModal />
   </div>
@@ -22,6 +23,7 @@ import LoginModal from '~/components/LoginModal.vue';
 import ServiceModal from '~/components/izperime/ServiceModal';
 import OrdersModal from '~/components/izperime/OrdersModal';
 import BasketTimeSlotModal from '~/components/izperime/BasketTimeSlotModal';
+import AddCardModal from '~/components/izperime/AddCardModal';
 import AccountModal from '~/components/izperime/AccountModal';
 import Notification from '~/components/Notification';
 
@@ -35,6 +37,7 @@ export default {
 	  ServiceModal,
 	  OrdersModal,
 	  BasketTimeSlotModal,
+	  AddCardModal,
 	  AccountModal,
 	  Notification,
     LoginModal

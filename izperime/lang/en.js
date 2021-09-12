@@ -143,5 +143,25 @@ export default {
   'Repeat Password': 'Repeat Password',
   'Forgot Password Modal Email': 'Email you are using to sign in:',
   'FAQ': 'Frequently Asked Questions',
-  forgotPasswordConfirmation: 'Thanks! If there is an account registered with the {0} email, you will find message with a password reset link in your inbox.'
+  forgotPasswordConfirmation: 'Thanks! If there is an account registered with the {0} email, you will find message with a password reset link in your inbox.',
+	"card": {
+		"cardHolder": "Card Holder",
+		"fullName": "Full Name",
+		"expires": "Expires",
+		"MM": "MM",
+		"YY": "YY"
+	},
+	"cardForm": {
+		"cardNumber": "Card Number",
+		"cardName": "Card Name",
+		"expirationDate": "Expiration Date",
+		"month": "Month",
+		"year": "Year",
+		"CVV": "CVV",
+		"submit": "Submit",
+		"invalidCardNumber": "Invalid Card Number",
+		"invalidCardCvv": "Invalid Card CVV",
+		"invalidCardExpiration": "Invalid Card Expiration",
+		"invalidCardName": "Invalid Card Name"
+	}
 };
