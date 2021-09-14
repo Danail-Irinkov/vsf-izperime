@@ -1,12 +1,16 @@
 import Vue from 'vue';
 import VueCompositionAPI, { reactive, computed } from '@vue/composition-api';
 import procc_api from '../helpers/procc_api.js'
+import axios from "axios";
 // We need to register it again because of Vue instance instantiation issues
 Vue.use(VueCompositionAPI);
 let apiClient = procc_api()
 
 const state = reactive({
 	user: {_id: ''},
+	cards: [],
+	selectedCard: {},
+	order: {},
 	authToken: '',
 	loading: false,
 	userError: {login: '', register: ''},
@@ -67,6 +71,7 @@ const userState = () => {
 			if (result.data && result.data.user)
 				state.user = {...result.data.user}
 
+			await getCards()
 
 			state.loading = false
 			return result
@@ -225,12 +230,14 @@ const userState = () => {
 			// return Promise.reject(e)
 		}
 	};
+	const order = computed(() => state.order);
 	const addNewOrder = async (data) => {
 		try {
 			state.forgotPasswordLoading = true
 			console.log('addNewOrder data', data)
 
 			let result = await apiClient.addNewOrder(data)
+			state.order = result.data.order
 
 			state.forgotPasswordLoading = false
 			return result
@@ -257,14 +264,37 @@ const userState = () => {
 			// return Promise.reject(e)
 		}
 	};
-	const saveCardVSF = async (data) => {
+	const saveCardVSF = async (formData) => {
 		try {
-			state.forgotPasswordLoading = true
-			console.log('saveCardVSF data', data)
+			state.loading = true
 
-			let result = await apiClient.saveCardVSF(data, state.user._id)
+			let result = await apiClient.saveCardVSF({CardType: formData.CardType}, state.user._id)
+			// console.log('saveCardVSF result', result)
 
-			state.forgotPasswordLoading = false
+			// Send Card details to Mangopay PSP
+			const params = new URLSearchParams()
+			params.append('accessKeyRef', result.data.cardRegistrationData.AccessKey)
+			params.append('data', result.data.cardRegistrationData.PreregistrationData)
+			params.append('cardNumber', String(formData.cardNumberNotMask).replaceAll(' ', ''))
+			params.append('cardExpirationDate', formData.cardMonth+String(formData.cardYear).slice(2,4))
+			params.append('cardCvx', formData.cardCvv)
+
+			let result2 = await axios.post(result.data.cardRegistrationData.CardRegistrationURL, params,{
+				headers: {
+					'Content-type': 'application/x-www-form-urlencoded',
+				}
+			})
+
+			// Update Card Registration
+			let result3 = await apiClient.updateCardRegistration({
+				CardName: '**** **** **** ' + formData.cardNumberNotMask.substr(formData.cardNumberNotMask.length - 4),
+				CardType: formData.CardType,
+				Id: result.data.cardRegistrationData.Id,
+				RegistrationData: result2.data
+			}, state.user._id)
+			// console.log('addCreditCard result3', result3)
+
+			state.loading = false
 			return result
 		} catch (e) {
 			console.log('saveCardVSF err', e)
@@ -274,6 +304,32 @@ const userState = () => {
 		}
 	};
 
+	const cards = computed(() => state.cards);
+	const selectedCard = computed(() => state.selectedCard);
+
+	const setSelectedCard = (card) => {
+		// console.log('setSelectedCard card', card)
+		state.selectedCard = card
+	};
+
+	const getCards = async () => {
+		try {
+			if(!(state.user && state.user._id)) return
+			state.loading = true
+			console.log('getCards data')
+
+			let result = await apiClient.getCards(state.user._id)
+			state.cards = result.data.cards
+
+			state.loading = false
+			return result
+		} catch (e) {
+			console.log('VSFOrderPayment err', e)
+			state.userError = e.data.message
+			state.loading = false
+			// return Promise.reject(e)
+		}
+	};
 
   return {
 	  user,
@@ -289,9 +345,14 @@ const userState = () => {
 	  register,
 	  login,
 	  logout,
+	  order,
 	  addNewOrder,
 	  VSFOrderPayment,
 	  saveCardVSF,
+	  cards,
+	  selectedCard,
+	  setSelectedCard,
+	  getCards,
 	  requestNewPass
   };
 };

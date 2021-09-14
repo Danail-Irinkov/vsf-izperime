@@ -48,7 +48,6 @@
 			    <h4 class="active-hotpink menu-text"
 			    >{{ $t('Orders') }}</h4>
 		    </div>
-	    </div>
 		    <div @click="toggleAddCardModal()">
 			    <SfIcon
 				    icon="login"
@@ -58,6 +57,7 @@
 			    <h4 class="active-hotpink menu-text"
 			    >{{ $t('Add a Card') }}</h4>
 		    </div>
+	    </div>
 	    </div>
 	    <hr size="1px" style="width: 100vw;position: absolute; left: 0;color: #2b313b"/>
 

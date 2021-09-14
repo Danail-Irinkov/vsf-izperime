@@ -62,7 +62,7 @@ extend('required', {
 });
 
 export default {
-  name: 'LoginModal',
+  name: 'AddCardModal',
   components: {
     SfModal,
     SfInput,
@@ -75,34 +75,55 @@ export default {
     SfBar,
 	  CardForm
   },
+	mounted(){
+  	// this.loadCards()
+	},
 	data(){
   	return {
+		  cards: [],
 		  formData: {
-			  cardName: '',
-			  cardNumber: '',
-			  cardMonth: '',
-			  cardYear: '',
-			  cardCvv: '',
+			  cardName: 'dasda asd',
+			  cardNumber: '4972 4858 3040 0072',
+			  cardMonth: '02',
+			  cardYear: 2023,
+			  cardCvv: '333',
 			  CardType: ''
 		  }
 	  }
 	},
   setup() {
     const { isAddCardModalOpen, toggleAddCardModal } = useUiState();
-    const { getCards, saveCardVSF } = userState();
+    const { getCards, saveCardVSF, updateCardRegistration, loading } = userState();
 
     return {
 	    isAddCardModalOpen,
 	    toggleAddCardModal,
 	    getCards,
 	    saveCardVSF,
+	    loading,
+	    updateCardRegistration,
     };
   },
 	methods: {
-		addCreditCard() {
+		async addCreditCard() {
+			try {
 			console.log('addCreditCard', this.formData)
-			this.saveCardVSF(this.formData)
-
+			let result = await this.saveCardVSF(this.formData)
+			console.log('addCreditCard result', result)
+				this.loadCards()
+			} catch (e) {
+				console.log('addCreditCard Error: ', e)
+			}
+		},
+		async loadCards() {
+			try {
+				console.log('getCards')
+				let result = await this.getCards()
+				console.log('getCards result', result.data.cards)
+				this.cards = result.data.cards
+			} catch (e) {
+				console.log('getCards Error: ', e)
+			}
 		}
 	}
 };

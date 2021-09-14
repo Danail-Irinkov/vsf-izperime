@@ -99,15 +99,26 @@
         </div>
       </div>
 
-      <button class="card-form__button" v-on:click="invaildCard">{{ $t('cardForm.submit') }}</button>
+      <button class="card-form__button"
+              :class="{disabled: loading}"
+              v-on:click="invaildCard"
+              :disabled="loading">{{ $t('cardForm.submit') }}</button>
     </div>
   </div>
 </template>
 
 <script>
 import Card from './Card'
+import { userState } from '~/composables';
 export default {
   name: 'CardForm',
+	setup(props, { emit }) {
+		const { loading } = userState();
+
+		return {
+			loading
+		};
+	},
   directives: {
     'number-only': {
       bind (el) {

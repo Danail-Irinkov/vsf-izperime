@@ -29,6 +29,8 @@
 				      name="streetName"
 				      :label="$t('Cleaning Instructions (optional)')"
 			      />
+
+			      <CardSelector v-if="cards && cards.length"/>
 		      </div>
 	      </transition>
       </template>
@@ -79,6 +81,7 @@ import BasketShippingAddress from '~/components/izperime/BasketShippingAddress';
 import BasketDeliverySlots from '~/components/izperime/BasketDeliverySlots';
 import AddressInput from '~/components/izperime/AddressInput.vue';
 import BasketItems from '~/components/izperime/BasketItems';
+import CardSelector from '~/components/izperime/CardSelector';
 import { computed } from '@vue/composition-api';
 import { useCart, useUser, cartGetters } from '@vue-storefront/commercetools';
 import { useUiState } from '~/composables';
@@ -92,6 +95,7 @@ export default {
 	  BasketShippingAddress,
 	  BasketDeliverySlots,
 	  BasketItems,
+	  CardSelector,
 	  AddressInput,
     SfSidebar,
     SfButton,
@@ -101,7 +105,7 @@ export default {
   setup() {
     const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal , toggleAddCardModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
-    const { isAuthenticated, user, addNewOrder, VSFOrderPayment , updateTransactionStatus } = userState();
+    const { isAuthenticated, user, addNewOrder, VSFOrderPayment, updateTransactionStatus , cards , order } = userState();
     const products = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
@@ -112,6 +116,8 @@ export default {
       isAuthenticated,
 	    updateTransactionStatus,
 	    user,
+	    cards,
+	    order,
 	    addNewOrder,
 	    VSFOrderPayment,
       products,
@@ -167,15 +173,20 @@ export default {
 					return
 				}
 
-				let order_data = await this.prepareProCCOrder()
-				console.log('order_data------------ placeProCCOrder', order_data)
+				if(!(this.order && this.order._id)) {
+					let order_data = await this.prepareProCCOrder()
+					console.log('order_data------------ placeProCCOrder', order_data)
 
-				let result = await this.addNewOrder(order_data)
-				console.log('order_data------------ result', result.data)
+					let result = await this.addNewOrder(order_data)
+					console.log('order_data------------ result', result.data)
+				}
 
-				if (result.data.message_type === 'success') {
+				if(!(this.cards && this.cards.length)) {
 					this.toggleAddCardModal()
-					await this.ProCCOrderPayment(result.data.order_id)
+					return
+				}
+				if (result.data.message_type === 'success') {
+					await this.ProCCOrderPayment(this.order._id)
 				} else {
 					throw new Error(result.data.message)
 				}
