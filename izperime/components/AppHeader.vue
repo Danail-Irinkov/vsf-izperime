@@ -285,8 +285,7 @@ export default {
   left: 40%;
 }
 ::v-deep .sf-header__header {
-		padding-top: 5px!important;
-		padding-bottom: 0px!important;
+	padding: 5px 16px 0px 16px!important;
 }
 ::v-deep .app-header {
 	--header-box-shadow: none!important;

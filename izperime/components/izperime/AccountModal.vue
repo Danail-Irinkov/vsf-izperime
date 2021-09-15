@@ -19,7 +19,7 @@
     <div name="sf-fade" mode="out-in">
       <p class="section-title">{{ $t('Your details')}}</p>
 	    <div v-if="!user._id">
-		    <div @click="openLoginModal('register')">
+		    <div class="pointer" @click="openLoginModal('register')">
 			    <SfIcon
 				    icon="account"
 				    :color="'hotpink'"
@@ -28,7 +28,7 @@
 			    <h4 class="active-hotpink menu-text"
 			    >{{ $t('Create a new account') }}</h4>
 		    </div>
-		    <div @click="openLoginModal('login')">
+		    <div class="pointer" @click="openLoginModal('login')">
 			    <SfIcon
 				    icon="login"
 				    :color="'hotpink'"
@@ -39,31 +39,39 @@
 		    </div>
 	    </div>
 	    <div v-else>
-		    <div @click="toggleOrdersModal()">
+		    <div class="pointer" @click="openOrdersModal">
 			    <SfIcon
-				    icon="login"
+				    icon="list"
 				    :color="'hotpink'"
 				    class="menu-icon"
 			    />
 			    <h4 class="active-hotpink menu-text"
 			    >{{ $t('Orders') }}</h4>
 		    </div>
-		    <div @click="toggleAddCardModal()">
+		    <div class="pointer" @click="toggleAddCardModal">
 			    <SfIcon
-				    icon="login"
+				    icon="credits"
 				    :color="'hotpink'"
 				    class="menu-icon"
 			    />
 			    <h4 class="active-hotpink menu-text"
 			    >{{ $t('Add a Card') }}</h4>
 		    </div>
+		    <div class="pointer" @click="logout">
+			    <SfIcon
+				    icon="logout"
+				    :color="'hotpink'"
+				    class="menu-icon"
+			    />
+			    <h4 class="active-hotpink menu-text"
+			    >{{ $t('Logout') }}</h4>
+		    </div>
 	    </div>
-	    </div>
-	    <hr size="1px" style="width: 100vw;position: absolute; left: 0;color: #2b313b"/>
+	    <hr size="1px" style="width: 100%;position: absolute; left: 0;color: #2b313b"/>
 
 	    <p class="section-title" style="margin-top: 25px">{{ $t('Our details')}}</p>
 
-	    <div>
+	    <div class="pointer">
 		    <SfIcon
 			    icon="question_mark"
 			    :color="'hotpink'"
@@ -72,7 +80,7 @@
 		    <h4 class="active-hotpink menu-text"
 		    >{{ $t('Help') }}</h4>
 	    </div>
-	    <div>
+	    <div class="pointer">
 		    <SfIcon
 			    icon="info"
 			    :color="'hotpink'"
@@ -81,7 +89,7 @@
 		    <h4 class="active-hotpink menu-text"
 		    >{{ $t('Terms of service') }}</h4>
 	    </div>
-	    <div>
+	    <div class="pointer">
 		    <SfIcon
 			    icon="info_shield"
 			    :color="'hotpink'"
@@ -127,15 +135,17 @@ export default {
 	  }
 	},
   setup(props, { emit }) {
-	  const { isAccountModalOpen, toggleAccountModal, toggleLoginModal, toggleAddCardModal } = useUiState();
-	  const { user } = userState();
+	  const { isAccountModalOpen, toggleAccountModal, toggleLoginModal, toggleAddCardModal , toggleOrdersModal } = useUiState();
+	  const { user, logout } = userState();
 
     return {
 	    toggleAccountModal,
 	    isAccountModalOpen,
 	    toggleLoginModal,
 	    toggleAddCardModal,
+	    toggleOrdersModal,
 	    user,
+	    logout,
     };
   },
 	methods: {
@@ -145,15 +155,16 @@ export default {
 		openLoginModal(action) {
 			this.toggleLoginModal(action)
 		},
-		toggleOrdersModal() {
-			this.toggleLoginModal()
+		openOrdersModal() {
+			this.toggleAccountModal()
+			this.toggleOrdersModal()
 		},
 	},
 	watch: {
 		isAccountModalOpen(service){
   		if (service) {
   			this.currentBodyScroll = window.scrollY
-			  document.body.style.position = 'fixed';
+			  // document.body.style.position = 'fixed';
 			  document.body.style.top = `-${window.scrollY}px`;
 		  } else {
 			  const scrollY = this.currentBodyScroll;

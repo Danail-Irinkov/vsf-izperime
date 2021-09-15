@@ -9,7 +9,7 @@
   >
     <template #modal-bar>
       <SfBar
-        class="sf-modal__bar smartphone-only"
+        class="sf-modal__bar "
         :close="true"
         :title="$t('Add a Card')"
         @click:close="toggleAddCardModal"

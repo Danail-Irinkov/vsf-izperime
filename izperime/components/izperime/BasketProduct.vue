@@ -1,6 +1,6 @@
 <template>
 	<div class="row sub_product_row">
-		<hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
+<!--		<hr size="1px" style="width: 100%;position: absolute; left: 0; color: #4B5563"/>-->
 		<div class="column" style="flex-grow: 1; margin-top: 6px">
 			<p class="sub_product__title">
 				{{ $t(product.title) }}
@@ -20,7 +20,7 @@
 			</p>
 			<div class="row align-end" style="text-align: end">
 				<SfCircleIcon
-					v-if="getCart[product._id] && getCart[product._id].quantity"
+					v-if="!product.quantity && getCart[product._id] && getCart[product._id].quantity"
 					class="add_circle_icon"
 					:class="{'add_circle_icon_fill': getCart[product._id]}"
 					:aria-label="$t('Remove')"
@@ -33,18 +33,22 @@
 					/>
 				</SfCircleIcon>
 				<p class="sub_product__quantity"
-				   v-if="getCart[product._id] && getCart[product._id].quantity">
+				   v-if="product && product.quantity">
+					{{ product.quantity }}
+				</p>
+				<p class="sub_product__quantity"
+				   v-else-if="getCart[product._id] && getCart[product._id].quantity">
 					{{ getCart[product._id].quantity }}
 				</p>
 				<SfCircleIcon
 					class="add_circle_icon"
-					:class="{'add_circle_icon_fill': getCart[product._id]}"
+					:class="{'add_circle_icon_fill': !product.quantity && getCart[product._id]}"
 					:aria-label="$t('Add')"
 					:style="{margin: '.5rem'}"
 					@click="incrementQuantity(product)">
 					<SfIcon
 						icon="plus"
-						:color="getCart[product._id] ? 'white' : 'hotpink'"
+						:color="!product.quantity && getCart[product._id] ? 'white' : 'hotpink'"
 						size="16px"
 					/>
 				</SfCircleIcon>
@@ -103,11 +107,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
 	.sub_product_row {
-		border-top: 1px;
+		border-top: #4B5563 solid 1px;
 		border-color: #4B5563;
-
 	}
 
 	.sub_product__title {

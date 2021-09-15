@@ -7,6 +7,7 @@
       <SfImage :src="`/icons/langs/${locale}.webp`" width="20" alt="Flag" />
     </SfButton>
     <SfBottomModal
+	    class="lang-selector-modal"
       :is-open="isLangModalOpen"
       :title="availableStores.length < 0 ? 'Choose store': ''"
       @click:close="isLangModalOpen = !isLangModalOpen">
@@ -123,6 +124,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .lang-selector-modal {
+	border: rgb(241, 242, 243) solid 1px;
+	& > .sf-bottom-modal__container {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		& > .container__lang--title {
+			border-bottom: rgb(241, 242, 243) solid 1px;
+		}
+	}
+}
 .container {
   margin: 0 -5px;
   display: flex;

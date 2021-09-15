@@ -1,5 +1,5 @@
 <template>
-	<div class="services-top-nav smartphone-only">
+	<div class="services-top-nav">
 		<div class="sf-top-bar__container" ref="top_menu_container">
 			<div class="sf-top-bar__left" v-dragscroll>
 				<div class="row" ref="menu_row" style="padding-right: 1rem;" :style="`width: ${getServiceNavWidth}px`">
@@ -181,7 +181,7 @@ hr {
 
 .sf-top-bar__left {
 	flex-direction: column;
-	max-width: 100vw;
+	max-width: 100%;
 	overflow-y: hidden;
 	overflow-x: auto;
 	overflow-scrolling: touch;

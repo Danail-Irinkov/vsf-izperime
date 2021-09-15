@@ -67,7 +67,7 @@ export default {
 .home-screen {
 	background-color: teal;
 	height: 100vh;
-	width: 100vw;
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	vertical-align: center;

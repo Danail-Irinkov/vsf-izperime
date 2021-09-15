@@ -33,7 +33,7 @@
 		      </div>
 	      </div>
 
-	      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
+	      <hr size="1px" style="width: 100%;position: absolute; left: 0; color: #4B5563"/>
 
 	      <div class="timeslot-selector" style="margin-top: 2rem" v-if="timeslots[currentTimeSlot] && timeslots[currentTimeSlot].selectedDay">
 		      <div class="available-timeslots pointer"
@@ -177,7 +177,7 @@ export default {
   	currentServiceModal(service){
   		if (service) {
   			this.currentBodyScroll = window.scrollY
-			  document.body.style.position = 'fixed';
+			  // document.body.style.position = 'fixed';
 			  document.body.style.top = `-${window.scrollY}px`;
 		  } else {
 			  const scrollY = this.currentBodyScroll;

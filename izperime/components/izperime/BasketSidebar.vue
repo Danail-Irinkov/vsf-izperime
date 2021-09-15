@@ -15,11 +15,11 @@
 				      ref="basket_address"
 				      :address="activeAddress"/>
 
-			      <hr size="1px" style="width: 100vw;position: absolute; left: 0; color: #4B5563"/>
+			      <hr size="1px" style="width: 100%;position: absolute; left: 0; color: #4B5563"/>
 
 			      <BasketDeliverySlots style="margin: 2rem 0"/>
 
-<!--			      <hr size="1px" style="width: 100vw;position: absolute; left: 0; margin-top: -14px;color: #4B5563"/>-->
+<!--			      <hr size="1px" style="width: 100%;position: absolute; left: 0; margin-top: -14px;color: #4B5563"/>-->
 
 			      <BasketItems style="margin: 2rem 0"/>
 
@@ -36,7 +36,7 @@
       </template>
       <template #content-bottom>
         <transition name="sf-fade">
-          <div v-if="cartCount">
+          <div v-if="cartCount" class="w-100">
             <SfProperty
               name="Subtotal price"
               class="sf-property--full-width sf-property--large my-cart__total-price"
@@ -105,7 +105,7 @@ export default {
   setup() {
     const { isBasketSidebarOpen, toggleBasketSidebar, toggleLoginModal , toggleAddCardModal } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart, loading } = useCart();
-    const { isAuthenticated, user, addNewOrder, VSFOrderPayment, updateTransactionStatus , cards , order } = userState();
+    const { isAuthenticated, user, addNewOrder, VSFOrderPayment, updateTransactionStatus , cards , order, selectedCard } = userState();
     const products = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
@@ -118,6 +118,7 @@ export default {
 	    user,
 	    cards,
 	    order,
+	    selectedCard,
 	    addNewOrder,
 	    VSFOrderPayment,
       products,
@@ -185,10 +186,11 @@ export default {
 					this.toggleAddCardModal()
 					return
 				}
-				if (result.data.message_type === 'success') {
+				console.log('order_data------------ this.order', this.order)
+				if (this.order && this.order._id) {
 					await this.ProCCOrderPayment(this.order._id)
 				} else {
-					throw new Error(result.data.message)
+					throw new Error('Order Processing Issue')
 				}
 
 
@@ -210,6 +212,7 @@ export default {
 			try {
 				let data = {
 					total_amount: this.cartAmount,
+					payment_method: this.selectedCard._id,
 					order_id,
 					BrowserInfo: this.getBrowserInfo()
 				}
@@ -281,9 +284,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .sf-bar.smartphone-only {
+	display: flex !important;
+}
+
+::v-deep .sf-heading__title {
+	display: none !important;
+}
+
+::v-deep .sf-sidebar__content {
+	display: none;
+}
+::v-deep .sf-sidebar__bottom {
+	padding-bottom: 60px;
+	& > div {
+		width: 100%;
+		display: block;
+	}
+}
 ::v-deep .sf-sidebar--right > .sf-sidebar__aside {
 	overflow-y: auto;
 	overflow-x: hidden;
+	right: auto;
+	width: 100%;
+	max-width: 624px;
+	& > .sf-sidebar__circle-icon {
+		top: 0;
+		right: 10px;
+	}
 }
 #cart {
   --sidebar-z-index: 3;
@@ -383,9 +411,9 @@ export default {
   }
 }
 	.place-order-button {
-		position: fixed;
+		position: absolute;
 		bottom: 8px;
-		width: 90vw;
+		width: 94%;
 		border-radius: 5px;
 		padding-top: 5px;
 		padding-bottom: 5px;

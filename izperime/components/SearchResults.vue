@@ -50,7 +50,7 @@
                 />
               </div>
             </SfScrollable>
-            <div class="results--mobile smartphone-only">
+            <div class="results--mobile ">
               <SfProductCard
                 v-for="(product, index) in products"
                 :key="index"
@@ -65,7 +65,7 @@
               />
             </div>
           </SfMegaMenuColumn>
-          <div class="action-buttons smartphone-only">
+          <div class="action-buttons ">
             <SfButton class="action-buttons__button color-light" @click="$emit('close')">{{ $t('Cancel') }}</SfButton>
           </div>
         </div>
@@ -73,7 +73,7 @@
           <SfImage src="/error/error.svg" class="before-results__picture" alt="error" loading="lazy"/>
           <p class="before-results__paragraph">{{ $t('You haven’t searched for items yet') }}</p>
           <p class="before-results__paragraph">{{ $t('Let’s start now – we’ll help you') }}</p>
-          <SfButton class="before-results__button color-secondary smartphone-only" @click="$emit('close')">{{ $t('Go back') }}</SfButton>
+          <SfButton class="before-results__button color-secondary " @click="$emit('close')">{{ $t('Go back') }}</SfButton>
         </div>
       </transition>
 </SfModal>

@@ -75,6 +75,59 @@ p, h4 {
 .hotpink {
 	color: hotpink;
 }
+.color-hotpink {
+	background-color: hotpink;
+}
 .color-izperime {
 	background-color: #8e44ad;
+}
+.sf-button--full-width {
+	height: 50px;
+}
+#__layout {
+	width: 100%;
+	max-width: 624px;
+	border-radius: 20px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.sf-bottom-navigation {
+	width: 100%;
+	max-width: 624px;
+	left: auto;
+}
+.sf-sidebar__aside {
+	max-width: 624px;
+	left: auto;
+	right: auto;
+}
+.sf-modal, .sf-bottom-modal {
+	width: 100%;
+	max-width: 624px;
+	left: auto;
+	right: auto;
+	--modal-content-padding: var(--spacer-sm) var(--spacer-lg);
+	--modal-width: unset;
+	--modal-top: unset;
+	--modal-left: unset;
+	--modal-bottom: unset;
+	--modal-right: unset;
+	--modal-transform: unset;
+	--modal-height: unset;
+	--modal-max-height: unset;
+}
+.sf-modal__container, .sf-bottom-modal__container {
+width: 100%;
+max-width: 624px;
+left: auto;
+right: auto;
+}
+.sf-overlay {
+display:  none;
+}
+.sf-modal__close.desktop-only {
+	display: none;
+}
+.sf-loader__overlay {
+	background-color: transparent;
 }

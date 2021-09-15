@@ -109,6 +109,7 @@ import { required, min, oneOf } from 'vee-validate/dist/rules';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { reactive, computed, watch } from '@vue/composition-api';
 import { useVSFContext } from '@vue-storefront/core';
+import { userState } from '~/composables';
 import '@/helpers/validators/phone';
 import {mapGetters} from "vuex";
 
@@ -164,13 +165,30 @@ export default {
 			getCity: 'getCity',
 		}),
 	},
-	mounted(){
+	async mounted(){
 		if (!this.form.city) this.form.city = String(this.getCity)
 		if (!this.form.country) this.form.country = 'Bulgaria'
+
+		let previousOrder = this.previousOrder
+		if (previousOrder && previousOrder.address && previousOrder.address._id) {
+			// this.form._id = previousOrder.address._id
+			this.form.firstName = previousOrder.address.firstName
+			this.form.lastName = previousOrder.address.lastName
+			this.form.streetName = previousOrder.address.streetName
+			this.form.apartment = previousOrder.address.apartment
+			this.form.city = previousOrder.address.city
+			this.form.country = previousOrder.address.country
+			this.form.phone = previousOrder.address.phone
+			this.form.deliveryNotes = previousOrder.address.deliveryNotes
+			this.updateParentData()
+		}
+
 	},
   setup(props, { emit }) {
     const { $ct: { config } } = useVSFContext();
-    const form = reactive({
+	  const { previousOrder, getPreviousOrder } = userState();
+
+	  const form = reactive({
       _id: props.address._id || '',
       firstName: props.address.firstName || '',
       lastName: props.address.lastName || '',
@@ -181,7 +199,6 @@ export default {
       phone: props.address.phone || '',
 	    deliveryNotes: props.address.deliveryNotes || '',
     });
-
     const submitForm = () => {
       emit('submit', {
         form,
@@ -213,6 +230,8 @@ export default {
 
     return {
       form,
+	    previousOrder,
+	    getPreviousOrder,
       validationRules,
       submitForm,
       countries: config.countries,

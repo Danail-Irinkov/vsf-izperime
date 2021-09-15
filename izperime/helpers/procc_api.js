@@ -124,6 +124,7 @@ export default (token = '') => {
 
   const validateVATNumber = (data, user_id) => api.post('payment/validateVATNumber', data, getHeader(user_id))
   const addNewOrder = (orderData, user_id) => api.post('order/addNewOrder', orderData, getHeader(user_id))
+  const getPreviousOrder = (user_id) => api.get('order/getPreviousOrder', getHeader(user_id))
   const saveTransactionInOrder = (orderData, user_id) => api.post('order/saveTransactionInOrder', orderData, getHeader(user_id))
   const VSFOrderPayment = (data, user_id) => api.post('mangopay/VSFOrderPayment', data, getHeader(user_id))
   const saveCardVSF = (data, user_id) => api.post('mangopay/saveCardVSF', data, getHeader(user_id))
@@ -154,6 +155,7 @@ export default (token = '') => {
 	  getToken,
     validateVATNumber,
     addNewOrder,
+	  getPreviousOrder,
     VSFOrderPayment,
     updateTransactionStatus,
     saveTransactionInOrder,

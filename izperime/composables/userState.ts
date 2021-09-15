@@ -11,6 +11,8 @@ const state = reactive({
 	cards: [],
 	selectedCard: {},
 	order: {},
+	orders: [],
+	previousOrder: { _id: ''},
 	authToken: '',
 	loading: false,
 	userError: {login: '', register: ''},
@@ -72,6 +74,7 @@ const userState = () => {
 				state.user = {...result.data.user}
 
 			await getCards()
+			await getPreviousOrder()
 
 			state.loading = false
 			return result
@@ -231,15 +234,35 @@ const userState = () => {
 		}
 	};
 	const order = computed(() => state.order);
+	const orders = computed(() => state.orders);
+	const previousOrder = computed(() => state.previousOrder);
+	const getPreviousOrder = async () => {
+		try {
+			if (state.user && state.user._id) {
+				state.loading = true
+				let result = await apiClient.getPreviousOrder(state.user._id)
+				state.previousOrder = result.data.last_order
+				state.orders = result.data.orders
+				state.loading = false
+			}
+
+			return state.previousOrder
+		} catch (e) {
+			console.log('register err', e)
+			state.userError = e.data.message
+			state.loading = false
+			// return Promise.reject(e)
+		}
+	};
 	const addNewOrder = async (data) => {
 		try {
-			state.forgotPasswordLoading = true
+			state.loading = true
 			console.log('addNewOrder data', data)
 
 			let result = await apiClient.addNewOrder(data)
 			state.order = result.data.order
 
-			state.forgotPasswordLoading = false
+			state.loading = false
 			return result
 		} catch (e) {
 			console.log('register err', e)
@@ -346,6 +369,9 @@ const userState = () => {
 	  login,
 	  logout,
 	  order,
+	  orders,
+	  previousOrder,
+	  getPreviousOrder,
 	  addNewOrder,
 	  VSFOrderPayment,
 	  saveCardVSF,

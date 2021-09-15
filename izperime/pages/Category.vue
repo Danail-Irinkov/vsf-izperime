@@ -804,7 +804,7 @@ export default {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    width: 100vw;
+    width: 100%;
   }
   &__buttons {
     margin: var(--spacer-sm) 0;

@@ -270,7 +270,7 @@ export default {
 
 .banner-grid {
   --banner-container-width: 50%;
-  margin: var(--spacer-xl) 0;
+  margin: var(--spacer-xl) 0!important;
   ::v-deep .sf-link:hover {
     color: var(--c-white);
   }
@@ -337,7 +337,7 @@ export default {
   }
 }
 	.banner-grid {
-		margin-top: 0;
+		margin-top: 0!important;
 	}
 
 	.pointer {

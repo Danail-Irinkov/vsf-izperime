@@ -1,6 +1,6 @@
 <template>
 <!-- TODO: create logic with isActive prop for BottomNavigationItems -->
-  <SfBottomNavigation class="navigation-bottom smartphone-only"
+  <SfBottomNavigation class="navigation-bottom"
                       style="background-color: hotpink"
                       v-show="isAccountMenuOpen">
     <div class="row h-100"

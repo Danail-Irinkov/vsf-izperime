@@ -9,7 +9,7 @@
 	>
 		<template #modal-bar>
 			<SfCircleIcon
-				:class="'back-button color-info'"
+				:class="'back-button color-info color-hotpink'"
 				:aria-label="$t('Go back')"
 				:style="{margin: '.5rem'}"
 				@click="closeServiceModal">
@@ -45,7 +45,7 @@
 		      </div>
 	      </div>
 	      <div v-if="service.faqs && service.faqs.length">
-		      <hr size="1px" style="width: 100vw;position: absolute; left: 0; margin-top: -14px;color: #2b313b"/>
+		      <hr size="1px" style="width: 100%;position: absolute; left: 0; margin-top: -14px;color: #2b313b"/>
 		      <p class="product__faqs">
 			      {{ $t('FAQ') }}
 		      </p>
@@ -125,7 +125,7 @@ export default {
   	currentServiceModal(service){
   		if (service) {
   			this.currentBodyScroll = window.scrollY
-			  document.body.style.position = 'fixed';
+			  // document.body.style.position = 'fixed';
 			  document.body.style.top = `-${window.scrollY}px`;
 		  } else {
 			  const scrollY = this.currentBodyScroll;

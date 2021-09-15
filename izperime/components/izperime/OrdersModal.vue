@@ -18,7 +18,14 @@
 <!--    <transition name="sf-fade"-->
     <div name="sf-fade" mode="out-in">
       <div class="service-dialog-wrapper">
-	      ORDERS LIST
+	      <div v-for="order in orders" :key="order._id"
+	            class="order-item">
+		      <span>{{ order.createdAt | dateFormatShort}}</span>
+		      <span style="float: right">{{ order.status }}</span>
+		      <div v-for="product in order.cart">
+			      <BasketProduct :product="product"></BasketProduct>
+		      </div>
+	      </div>
       </div>
     </div>
 	</SfModal>
@@ -30,11 +37,8 @@ import {
 	SfIcon,
 } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
+import { userState } from '~/composables';
 import BasketProduct  from '~/components/izperime/BasketProduct';
-import { Collapse, CollapseItem } from 'element-ui'
-import { capitalizeFirstLetter } from '~/helpers/globalFuncs';
-import {mapGetters, mapMutations} from "vuex";
-import _cloneDeep from "lodash.clonedeep";
 
 export default {
   name: 'OrdersModal',
@@ -43,7 +47,6 @@ export default {
 	  SfModal,
 	  SfIcon,
 	  BasketProduct,
-	  Collapse, CollapseItem,
   },
   props: {
   },
@@ -53,36 +56,50 @@ export default {
 	},
   setup(props, { emit }) {
 	  const { toggleOrdersModal, isOrdersModalOpen } = useUiState();
-	  let capFirst = capitalizeFirstLetter
+	  const { orders } = userState();
 
     return {
 	    toggleOrdersModal,
 	    isOrdersModalOpen,
-	    capFirst,
+	    orders
     };
   },
 	mounted () {
-  	this.timeslots = _cloneDeep(this.getTimeSlots)
 	},
 	methods: {
-		...mapMutations({
-			setTimeSlots: 'setTimeSlots',
-		}),
 	},
 	watch: {
 	},
 	computed: {
-		...mapGetters({
-			getTimeSlots: 'getTimeSlots',
-		}),
 	},
 	filters: {
-		capitalizeFirstLetter(string) {
-			return string ? string.charAt(0).toUpperCase() + string.slice(1) : ''
-		},
-	},
+  	dateFormatShort(value) {
+			if (!value)
+				return ''
+			else {
+				const date = new Date(value)
+				const monthNames = [
+					'Jan', 'Feb', 'Mar',
+					'Apr', 'May', 'Jun', 'Jul',
+					'Aug', 'Sep', 'Oct',
+					'Nov', 'Dec'
+				]
+
+				const day = date.getDate()
+				const monthIndex = date.getMonth()
+				const year = date.getFullYear()
+
+				return `${day}. ${monthNames[monthIndex]}` + ' ' + year
+			}
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
-
+.order-item {
+	border: #7F828B solid 1px;
+	border-radius: 15px;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
 </style>
